@@ -1,0 +1,45 @@
+from __future__ import absolute_import
+from .octopath import OctoPathGameAuto
+import os
+import logging
+
+class GameAuto(object):
+    def __init__(self, game, config):
+        self.game = game
+        # 读取配置文件
+        self.config = self.read_config(config)
+        self.logger = logging.getLogger(__name__)
+        if self.config.get('debug', False):
+            self.logger.setLevel(logging.DEBUG)
+
+    def run(self, action):
+        self.logger.debug(f'game: {self.game}, action: {action}, config: {self.config}')
+
+        if self.game == 'octopath':
+            octpath = OctoPathGameAuto(self.config)
+            octpath.run(action)
+        else:
+            print(f'不存在的游戏名: {self.game}')
+
+
+    def read_config(self, config):
+        import json
+        from .base.constants import ANDRIOD_EMULATOR_NAME
+        # If the config file is not provided, use the default config
+        default_config = {
+            'app': {
+                'emulator': ANDRIOD_EMULATOR_NAME,
+            }
+        }
+        if not config:
+            config = "gameauto.json"
+
+        if not os.path.exists(config):
+            return default_config
+        with open(config, 'r') as f:
+            config = json.load(f)
+            # merge the default config with the provided config
+            # the provided config will overwrite the default config
+            # if there is a conflict
+            default_config.update(config)
+            return default_config     
