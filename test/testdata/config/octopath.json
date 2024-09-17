@@ -1,0 +1,7 @@
+{
+    "debug": true,
+    "ocr":{
+        "use_gpu": false,
+        "gpu_id": 0
+    }
+}
