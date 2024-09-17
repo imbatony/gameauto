@@ -3,6 +3,7 @@ from .base import BaseOctCommand
 from enum import Enum
 import cv2
 
+
 class OctopathStatus(Enum):
     Free = 1 << 0  # 自由状态,可以进行任意操作
     Combat = 1 << 1  # 战斗中
@@ -65,19 +66,33 @@ class OctopathCheckStatusCommand(BaseOctCommand):
 
         self.logger.debug(f"检查游戏状态: {self.image_path}")
         # 识别图片中的文字
-        result = self.recognize_text(self.image_path)
-        self.logger.debug(f": {result}")
+        # result = self.recognize_text(self.image_path)
+        # self.logger.debug(f": {result}")
+        # positions = []
+        # for line in result["data"]:
+        #     positions.append(
+        #         StrPosition(
+        #             line["text"],
+        #             line["text_box_position"][0][0], # 左上角坐标
+        #             line["text_box_position"][0][1],
+        #             line["text_box_position"][1][0], # 右下角坐标
+        #             line["text_box_position"][1][1],
+        #         )
+        #     )
+
+        result = self.ocr(self.image_path)
         positions = []
-        for line in result["data"]:
-            positions.append(
-                StrPosition(
-                    line["text"],
-                    line["text_box_position"][0][0], # 左上角坐标
-                    line["text_box_position"][0][1],
-                    line["text_box_position"][1][0], # 右下角坐标
-                    line["text_box_position"][1][1],
+        for line in result:
+            for ele in line:
+                txt = ele[1][0]
+                confidence = ele[1][1]
+                left_top = ele[0][0]
+                right_bottom = ele[0][1]
+                positions.append(
+                    StrPosition(
+                        txt, left_top[0], left_top[1], right_bottom[0], right_bottom[1]
+                    )
                 )
-            )
 
         # check the status by the text
         # the status is 0 by default

@@ -4,6 +4,7 @@ import paddlehub as hub
 import cv2
 import logging
 from .constants import ANDRIOD_EMULATOR_NAME
+from paddleocr import PaddleOCR
 
 
 class CommandRet(object):
@@ -23,7 +24,19 @@ def _get_center(box, offset_x=0, offset_y=0) -> tuple[int, int]:
     return (p1[0] + p2[0]) // 2 + offset_x, (p1[1] + p2[1]) // 2 + offset_y
 
 class BaseAutoGuiCommand(object):
+    __ocr = hub.Module(name="chinese_ocr_db_crnn_mobile")
+    __paddleocr = PaddleOCR(lang='ch', show_log=True, use_angle_cls=True,
+                    # det_model_dir='D:\\models\\ch_ppocr_mobile_v2.0_det_infer\\',
+                    #   #det_model_dir='.paddleocr\\whl\\det\\ch\\ch_PP-OCRv4_det_infer',
+                    #   rec_model_dir='D:\\models\\ch_ppocr_mobile_v2.0_rec_infer\\') # 推理模型路径
+        )
     def __init__(self, config, *args, **kwargs):
+        self.name = self.__class__.__name__
+        self.logger = logging.getLogger(__name__)
+        if config.get("debug", False):
+            self.logger.setLevel(logging.DEBUG)
+        else:
+            self.logger.setLevel(logging.INFO)
         self.config = config
         self.args = args
         self.kwargs = kwargs
@@ -36,22 +49,27 @@ class BaseAutoGuiCommand(object):
 
             if os.environ.get("CUDA_VISIBLE_DEVICES") is None:
                 os.environ["CUDA_VISIBLE_DEVICES"] = f"{self.gpu_id}"
-        self.ocr = hub.Module(name="chinese_ocr_db_crnn_mobile")
-        self.name = self.__class__.__name__
-        self.logger = logging.getLogger(__name__)
-        if config.get("debug", False):
-            self.logger.setLevel(logging.DEBUG)
-        else:
-            self.logger.setLevel(logging.INFO)
+        # load the ocr model from local dir
+        # self.ocr = hub.Module(directory="C:\\Users\\tony\\.paddlehub\\modules\\chinese_ocr_db_crnn_mobile", update=False)
+        # 设定模型路径
         self.app = None
 
 
     def run(self)-> CommandRet:
         raise NotImplementedError
 
+    def ocr(self, image_path):
+        img = cv2.imread(image_path)
+        result = BaseAutoGuiCommand.__paddleocr.ocr(img, cls=True)
+        for idx in range(len(result)):
+            res = result[idx]
+            for line in res:
+                self.logger.debug(f"识别结果: {line}")
+        return result
+
     def recognize_text(self, image_path):
         img = cv2.imread(image_path)
-        result = self.ocr.recognize_text(images=[img], use_gpu=self.use_gpu)[0]
+        result = BaseAutoGuiCommand.__ocr.recognize_text(images=[img], use_gpu=False)[0]
         return result
 
     def find_text_and_click(
@@ -62,7 +80,7 @@ class BaseAutoGuiCommand(object):
         # 识别图片中的文字
         img = cv2.imread(image_path)
         self.logger.debug(f"识别图片中的文字: {text}")
-        result = self.ocr.recognize_text(images=[img], use_gpu=False)[0]
+        result = BaseAutoGuiCommand.__ocr.recognize_text(images=[img], use_gpu=False)[0]
         if clean_file:
             os.remove(image_path)
         self.logger.debug(f"识别结果: {result}")

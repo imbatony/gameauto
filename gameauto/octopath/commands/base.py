@@ -26,12 +26,12 @@ class BaseOctCommand(BaseAutoGuiCommand):
             ret.success = False
             ret.status = "timeout"
             ret.exp = e
-            self.logger.error(f"{self.name}执行超时: {e}")
+            self.logger.exception(f"{self.name}执行超时")
         except Exception as e:
             ret.success = False
             ret.status = "exception"
             ret.exp = e
-            self.logger.error(f"{self.name}执行异常: {e}", stack_info=True)
+            self.logger.exception(f"{self.name}执行异常")
         finally:
             ellipsis = time.time() - start_time
             ret.ellipsis = ellipsis

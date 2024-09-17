@@ -20,7 +20,7 @@ class TestOctopathCheckStatus(unittest.TestCase):
         config_path = Path(TEST_DATA_DIR, "config", "octopath.json")
         config = json.load(open(config_path))
         command = OctopathCheckStatusCommand(config, image_path)
-        command.recognize_text = MagicMock(return_value={"data":[{"text": "菜单", "text_box_position": [[1448, 1813], [2797, 1824], [2797, 1933], [1448, 1922]]}]})
+        # command.recognize_text = MagicMock(return_value={"data":[{"text": "菜单", "text_box_position": [[1448, 1813], [2797, 1824], [2797, 1933], [1448, 1922]]}]})
         ret = command.run()
         self.assertTrue(ret.success)
         self.assertEqual(ret.status, "success")
