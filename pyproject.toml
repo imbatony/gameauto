@@ -7,9 +7,10 @@ authors = [
 dependencies = [
     "pyautogui",
     "paddlehub==2.4.0",
-    "paddlepaddle==2.1.2",
+    "paddlepaddle==2.6.1",
     "shapely",
-    "pyclipper"
+    "pyclipper",
+    "paddleocr==2.8.1"
 ]
 description = "A simple game automation library"
 readme = "README.md"
