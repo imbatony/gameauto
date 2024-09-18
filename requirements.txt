@@ -23,6 +23,7 @@ GitPython==3.1.43
 huggingface-hub==0.25.0
 humanfriendly==10.0
 idna==3.10
+iniconfig==2.0.0
 Jinja2==3.1.4
 kiwisolver==1.4.7
 lightning-utilities==0.11.7
@@ -41,6 +42,7 @@ pandas==2.2.2
 pefile==2024.8.26
 pillow==10.4.0
 platformdirs==4.3.6
+pluggy==1.5.0
 Polygon3==3.0.9.1
 protobuf==5.28.1
 psutil==6.0.0
@@ -56,6 +58,7 @@ pyperclip==1.9.0
 pyreadline3==3.5.3
 PyRect==0.2.0
 PyScreeze==1.0.1
+pytest==8.3.3
 python-dateutil==2.9.0.post0
 pytorch-lightning==2.4.0
 pytweening==1.2.0
@@ -71,6 +74,7 @@ shapely==2.0.6
 six==1.16.0
 smmap==5.0.1
 sympy==1.13.2
+timeout-decorator==0.5.0
 torch==2.4.1
 torchmetrics==1.4.2
 torchvision==0.19.1
