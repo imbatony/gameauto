@@ -1,5 +1,6 @@
 from ..utils import get_logger
 
+
 class GameAutoBase(object):
     def __init__(self, config):
         self.config = config
@@ -8,6 +9,6 @@ class GameAutoBase(object):
 
     def run(self, action):
         raise NotImplementedError
-    
-    def support_action(self, action)-> bool:
+
+    def support_action(self, action) -> bool:
         raise NotImplementedError

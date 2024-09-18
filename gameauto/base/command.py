@@ -5,6 +5,7 @@ from .constants import ANDRIOD_EMULATOR_NAME
 from ..ocr import cnocr
 from ..utils import get_logger
 
+
 class CommandRet(object):
     def __init__(self, success, status, exp, ellipsis, obj=None):
         self.status = status
@@ -12,14 +13,16 @@ class CommandRet(object):
         self.exp = exp
         self.ellipsis = ellipsis
         self.obj = obj
-    
+
     def __str__(self):
         return f"CommandRet<status={self.status}, success={self.success}, ellipsis={self.ellipsis}, obj={self.obj}>"
+
 
 def _get_center(box, offset_x=0, offset_y=0) -> tuple[int, int]:
     p1 = box[0]
     p2 = box[3]
     return (p1[0] + p2[0]) // 2 + offset_x, (p1[1] + p2[1]) // 2 + offset_y
+
 
 class BaseAutoGuiCommand(object):
     def __init__(self, config, *args, **kwargs):
@@ -42,8 +45,7 @@ class BaseAutoGuiCommand(object):
         # 设定模型路径
         self.app = None
 
-
-    def run(self)-> CommandRet:
+    def run(self) -> CommandRet:
         raise NotImplementedError
 
     def ocr(self, image_path):
@@ -56,7 +58,8 @@ class BaseAutoGuiCommand(object):
             txt = line["text"]
             p1 = line["position"][0]
             p2 = line["position"][2]
-            self.logger.debug(f"识别到的文字: \"{txt}\" 位置: ({p1[0]},{p1[1]}) ({p2[0]},{p2[1]})")
+            self.logger.debug(
+                f"识别到的文字: \"{txt}\" 位置: ({p1[0]},{p1[1]}) ({p2[0]},{p2[1]})")
             ret.append({
                 "text": txt,
                 "position": (p1, p2)
@@ -71,7 +74,8 @@ class BaseAutoGuiCommand(object):
         # 识别图片中的文字
         img = cv2.imread(image_path)
         self.logger.debug(f"识别图片中的文字: {text}")
-        result = BaseAutoGuiCommand.__ocr.recognize_text(images=[img], use_gpu=False)[0]
+        result = BaseAutoGuiCommand.__ocr.recognize_text(
+            images=[img], use_gpu=False)[0]
         if clean_file:
             os.remove(image_path)
         self.logger.debug(f"识别结果: {result}")
@@ -92,12 +96,14 @@ class BaseAutoGuiCommand(object):
                 return True
         return False
 
-    def app_screenshot(self, path:str = None) -> str:
+    def app_screenshot(self, path: str = None) -> str:
         if path is None:
-            path = os.path.join(os.environ.get("TEMP"), f"{int(time.time())}.png")
+            path = os.path.join(os.environ.get("TEMP"),
+                                f"{int(time.time())}.png")
         # 截取app窗口的屏幕截图
         self.logger.debug(f"截取app窗口的屏幕截图: {path}")
-        app_x, app_y, app_width, app_height = self.relocate_and_active_app(False)
+        app_x, app_y, app_width, app_height = self.relocate_and_active_app(
+            False)
         region = (app_x, app_y, app_width, app_height)
         pyautogui.screenshot(path, region=region)
         return path

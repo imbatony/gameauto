@@ -9,6 +9,7 @@ if __package__ is None and not getattr(sys, "frozen", False):
 
 from gameauto import GameAuto
 
+
 def main():
     # 解析命令
     parser = argparse.ArgumentParser(prog="GameAuto")
@@ -30,7 +31,8 @@ def main():
     if not gameauto.support_action(action):
         print(f"游戏{game}不支持操作{action}")
         return
-    from .ocr import cnocr
+    from .ocr import dummy
+    dummy()
     try:
         print(f"开始执行操作{action}")
         start_time = time.time()  # 记录开始时间
@@ -43,6 +45,7 @@ def main():
         print(f"操作{action}执行中断,耗时{end_time - start_time:.2f}秒")
         exit(0)
 
+
 if __name__ == "__main__":
     main()
 
@@ -52,7 +55,8 @@ if __name__ == "__main__":
 #     start_time = time.time()
 #     from cnocr import CnOcr
 #     # 所有参数都使用默认值
-#     ocr = CnOcr(rec_model_name='densenet_lite_136-gru', det_model_name='db_shufflenet_v2_small', det_more_configs={'rotated_bbox': False})
+#     ocr = CnOcr(rec_model_name='densenet_lite_136-gru',
+#        det_model_name='db_shufflenet_v2_small', det_more_configs={'rotated_bbox': False})
 #     ellipsis = time.time() - start_time
 #     print(f"加载完成,耗时{ellipsis:.2f}秒")
 #     start_time = time.time()

@@ -9,7 +9,8 @@ def get_logger(name, config):
         return logger
     level = config.get('logging', {}).get('level', 'INFO').upper()
     logger.setLevel(getattr(logging, level))
-    formatter = logging.Formatter(config.get('logging', {}).get('format', '%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
+    formatter = logging.Formatter(config.get('logging', {}).get(
+        'format', '%(asctime)s - %(name)s - %(levelname)s - %(message)s'))
     consoleHeader = logging.StreamHandler()
     consoleHeader.setFormatter(formatter)
     logger.addHandler(consoleHeader)
@@ -21,7 +22,8 @@ def get_logger(name, config):
         dir = os.path.dirname(file)
         if not os.path.exists(dir):
             os.makedirs(dir)
-        file_handler = TimedRotatingFileHandler(file, when='D', interval=1, backupCount=7, encoding='utf-8')
+        file_handler = TimedRotatingFileHandler(
+            file, when='D', interval=1, backupCount=7, encoding='utf-8')
         file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)
         logger.debug(f'log file: {file}')

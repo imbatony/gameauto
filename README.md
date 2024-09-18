@@ -1,2 +1,2 @@
-# gameauto
+# gameauto [![gameauto](https://github.com/imbatony/gameauto/actions/workflows/python-app.yml/badge.svg)](https://github.com/imbatony/gameauto/actions/workflows/python-app.yml)
 `A simple game automation library`
