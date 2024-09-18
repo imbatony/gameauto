@@ -9,6 +9,9 @@ class OctopathStatus(Enum):
     Dialog = 1 << 2  # 对话中，可以选择对话选项
     Menu = 1 << 3  # 主菜单中
     Other = 1 << 4  # 其他菜单中
+    Gameboard = 1 << 5  # 游戏棋盘中
+    Conclusion = 1 << 6  # 结算中，可以点击退出
+    Conclusion2 = 1 << 7  # 结算中,需要长按退出
     Unknown = 1 << 10  # 未知状态
 
     def is_free(int) -> bool:
@@ -22,6 +25,18 @@ class OctopathStatus(Enum):
 
     def is_menu(int) -> bool:
         return int & OctopathStatus.Menu.value == OctopathStatus.Menu.value
+
+    def is_other(int) -> bool:
+        return int & OctopathStatus.Other.value == OctopathStatus.Other.value
+    
+    def is_gameboard(int) -> bool:
+        return int & OctopathStatus.Gameboard.value == OctopathStatus.Gameboard.value
+    
+    def is_conclusion(int) -> bool:
+        return int & OctopathStatus.Conclusion.value == OctopathStatus.Conclusion.value
+    
+    def is_conclusion2(int) -> bool:
+        return int & OctopathStatus.Conclusion2.value == OctopathStatus.Conclusion2.value
 
     def is_unknown(int) -> bool:
         return int & OctopathStatus.Unknown.value == OctopathStatus.Unknown.value
@@ -84,14 +99,21 @@ class OctopathCheckStatusCommand(BaseOctCommand):
         # check the status by the text
         for pos in positions:
             if "菜单" in pos.str:
+                self.logger.debug(f"主菜单: {pos.str}")
                 status |= OctopathStatus.Menu.value | OctopathStatus.Free.value
-                break
             if "其他" in pos.str:
+                self.logger.debug(f"其他菜单: {pos.str}")
                 status |= OctopathStatus.Other.value | OctopathStatus.Free.value
-                break
             if "回合" in pos.str:
+                self.logger.debug(f"战斗中: {pos.str}")
                 status |= OctopathStatus.Combat.value
-                if "攻击" in pos.str:
-                    status |= OctopathStatus.Free.value
+            if "战斗结算" in pos.str:
+                self.logger.debug(f"结算: {pos.str}")
+                status |= OctopathStatus.Conclusion.value | OctopathStatus.Free.value | OctopathStatus.Combat.value
+        
+        for pos in positions:
+            if "攻击" in pos.str and OctopathStatus.is_combat(status):
+                self.logger.debug(f"战斗待命: {pos.str}")
+                status |= OctopathStatus.Free.value
 
         return OctopathCheckStatusRet(status, positions)
