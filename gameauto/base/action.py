@@ -1,13 +1,12 @@
-import logging
 import time
 from gameauto.base.command import BaseAutoGuiCommand, CommandRet
+from ..utils import get_logger
 class BaseGameAction(object):
     def __init__(self, config, *args):
         self.config = config
         self.args = args
-        self.logger = logging.getLogger(__name__)
-        if self.config.get('debug', False):
-            self.logger.setLevel(logging.DEBUG)
+        self.name = self.__class__.__name__
+        self.logger = get_logger(self.name, config)
         self.commands: list[BaseAutoGuiCommand] = []
         
     def run(self):
@@ -24,7 +23,7 @@ class BaseGameAction(object):
         # get the end time
         end_time = time.time()
         # print the time
-        self.logger.debug(f"Action:{self.__class__.__name__}执行完成: {end_time - start_time}, 成功: {success}")
+        self.logger.debug(f"Action:{command.__class__.__name__}执行完成: {end_time - start_time}, 成功: {success}")
     
     def add_command(self, command):
         self.commands.append(command)

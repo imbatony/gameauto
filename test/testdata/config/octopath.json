@@ -1,5 +1,8 @@
 {
-    "debug": true,
+    "logging":{
+        "level": "DEBUG",
+        "file": "logs/octopath.log"
+    },
     "ocr":{
         "use_gpu": false,
         "gpu_id": 0

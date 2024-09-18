@@ -2,7 +2,6 @@ import pyautogui as pyautogui
 from ...base import BaseAutoGuiCommand, CommandRet
 import time
 import timeout_decorator
-import cv2
 
 
 class BaseOctCommand(BaseAutoGuiCommand):

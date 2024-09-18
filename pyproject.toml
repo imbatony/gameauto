@@ -6,11 +6,10 @@ authors = [
 ]
 dependencies = [
     "pyautogui",
-    "paddlehub==2.4.0",
-    "paddlepaddle==2.6.1",
-    "shapely",
-    "pyclipper",
-    "paddleocr==2.8.1"
+    "timeout-decorator==0.5.0",
+    "pyinstaller",
+    "pytest",
+    "cnocr"
 ]
 description = "A simple game automation library"
 readme = "README.md"

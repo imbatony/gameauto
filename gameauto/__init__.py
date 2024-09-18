@@ -1,16 +1,15 @@
 from __future__ import absolute_import
 from .octopath import OctoPathGameAuto
 import os
-import logging
+from .utils import get_logger
+
 
 class GameAuto(object):
     def __init__(self, game, config):
         self.game = game
         # 读取配置文件
         self.config = self.read_config(config)
-        self.logger = logging.getLogger(__name__)
-        if self.config.get('debug', False):
-            self.logger.setLevel(logging.DEBUG)
+        self.logger = get_logger(self.game, self.config)
 
         if self.game == 'octopath':
             self.gameauto = OctoPathGameAuto(self.config)
@@ -19,7 +18,8 @@ class GameAuto(object):
             raise ModuleNotFoundError(f'不存在的游戏名: {self.game}')
 
     def run(self, action):
-        self.logger.debug(f'game: {self.game}, action: {action}, config: {self.config}')    
+        self.logger.debug(
+            f'game: {self.game}, action: {action}, config: {self.config}')
         self.gameauto.run(action)
 
     def support_action(self, action):
@@ -32,6 +32,15 @@ class GameAuto(object):
         default_config = {
             'app': {
                 'emulator': ANDRIOD_EMULATOR_NAME,
+            },
+            'logging': {
+                'level': 'INFO',
+                'format': '%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+                'file': None
+            },
+            "ocr": {
+                "use_gpu": False,
+                "gpu_id": 0
             }
         }
         if not config:
@@ -45,4 +54,4 @@ class GameAuto(object):
             # the provided config will overwrite the default config
             # if there is a conflict
             default_config.update(config)
-            return default_config     
+            return default_config
