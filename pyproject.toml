@@ -7,8 +7,6 @@ authors = [
 dependencies = [
     "pyautogui",
     "timeout-decorator==0.5.0",
-    "pyinstaller",
-    "pytest",
     "cnocr"
 ]
 description = "A simple game automation library"
@@ -34,3 +32,7 @@ log_cli_level = "DEBUG"
 filterwarnings = [
     "ignore"
 ]
+
+[tool.setuptools]
+# ...
+package-dir = {"" = "gameauto"}
