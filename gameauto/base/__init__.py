@@ -3,3 +3,4 @@ from .action import *
 from .game import *
 from .constants import *
 from .command import *
+from .task import *

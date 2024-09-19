@@ -1,18 +1,21 @@
+from abc import abstractmethod
 import pyautogui as pyautogui
-from ...base import BaseAutoGuiCommand, CommandRet
+from ...base import BaseCommand, CommandRet, CommandRetStatus
 import time
 import timeout_decorator
+from ...base import BaseGUI
 
 
-class BaseOctCommand(BaseAutoGuiCommand):
-    def __init__(self, config, *args, **kwargs):
-        super().__init__(config, *args, **kwargs)
+class BaseOctCommand(BaseCommand):
+    def __init__(self, config, gui: BaseGUI = None, *args, **kwargs):
+        super().__init__(config, gui, *args, **kwargs)
 
+    @abstractmethod
     def run_impl(self) -> object:
         raise NotImplementedError
 
     def run(self) -> CommandRet:
-        ret: CommandRet = CommandRet(False, "not_run", None, 0)
+        ret: CommandRet = CommandRet(False, CommandRetStatus.NOT_RUN, 0)
         # 记录开始时间
         start_time = time.time()
         # 执行具体的操作
@@ -20,15 +23,15 @@ class BaseOctCommand(BaseAutoGuiCommand):
         try:
             ret.obj = self.run_impl()
             ret.success = True
-            ret.status = "success"
+            ret.status = CommandRetStatus.SUCCESS
         except timeout_decorator.timeout_decorator.TimeoutError as e:
             ret.success = False
-            ret.status = "timeout"
+            ret.status = CommandRetStatus.TIMEOUT
             ret.exp = e
             self.logger.exception(f"{self.name}执行超时")
         except Exception as e:
             ret.success = False
-            ret.status = "exception"
+            ret.status = CommandRetStatus.EXCEPTION
             ret.exp = e
             self.logger.exception(f"{self.name}执行异常")
         finally:

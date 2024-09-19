@@ -11,24 +11,28 @@ TEST_DATA_DIR = Path(os.path.dirname(os.path.abspath(__file__)), "testdata")
 sys.path.append(str(TEST_DATA_DIR))
 importlib.invalidate_caches()
 
-from gameauto.octopath.commands.check_status import *
+from gameauto.octopath.actions import *
+from gameauto.octopath.status import OctopathStatus
+from gameauto.base.gui import BaseGUI
+from gameauto.octopath.ctx import OctopathTaskCtx
 
 
 class TestOctopathCheckStatus(unittest.TestCase):
-    def test_check_status(self, mock=None):
-        image_path = Path(TEST_DATA_DIR, "image", "octopath", "main.png")
+
+    def __init__(self, methodName: str = ...) -> None:
+        super().__init__(methodName)
         config_path = Path(TEST_DATA_DIR, "config", "octopath.json")
         config = json.load(open(config_path))
-        command = OctopathCheckStatusCommand(config, image_path)
-        # command.recognize_text = MagicMock(return_value={"data":[{"text": "菜单", "text_box_position": [[1448, 1813], [2797, 1824], [2797, 1933], [1448, 1922]]}]})
-        ret = command.run()
-        self.assertTrue(ret.success)
-        self.assertEqual(ret.status, "success")
-        self.assertIsNotNone(ret.obj)
-        obj:OctopathCheckStatusRet = ret.obj
-        self.assertTrue(OctopathStatus.is_menu(obj.status))
-        self.assertTrue(OctopathStatus.is_free(obj.status))
-        self.assertFalse(OctopathStatus.is_combat(obj.status))
+        ctx = OctopathTaskCtx()
+        self.action = BaseOctopathAction(config, ctx)
+
+    def test_check_status(self, mock=None):
+        image_path = Path(TEST_DATA_DIR, "image", "octopath", "main.png")
+        ret = self.action.ocr(image_path)
+        status = self.action.detect_status(ret)
+        self.assertTrue(OctopathStatus.is_menu(status))
+        self.assertTrue(OctopathStatus.is_free(status))
+        self.assertFalse(OctopathStatus.is_combat(status))
 
     def test_status_enum(self):
         self.assertEqual(OctopathStatus.Free.value, 1 << 0)
@@ -36,64 +40,45 @@ class TestOctopathCheckStatus(unittest.TestCase):
         self.assertEqual(OctopathStatus.Dialog.value, 1 << 2)
         self.assertEqual(OctopathStatus.Menu.value, 1 << 3)
         self.assertEqual(OctopathStatus.Other.value, 1 << 4)
-        self.assertEqual(OctopathStatus.Unknown.value, 1 << 10)
+        self.assertEqual(OctopathStatus.Unknown.value, 0)
 
     def test_check_status_720p(self):
         image_path = Path(TEST_DATA_DIR, "image", "octopath", "main_720p.png")
-        config_path = Path(TEST_DATA_DIR, "config", "octopath.json")
-        config = json.load(open(config_path))
-        command = OctopathCheckStatusCommand(config, image_path)
-        ret = command.run()
-        self.assertTrue(ret.success)
-        self.assertEqual(ret.status, "success")
-        self.assertIsNotNone(ret.obj)
-        obj:OctopathCheckStatusRet = ret.obj
-        self.assertTrue(OctopathStatus.is_menu(obj.status))
-        self.assertTrue(OctopathStatus.is_free(obj.status))
-        self.assertFalse(OctopathStatus.is_combat(obj.status))
+        ret = self.action.ocr(image_path)
+        status = self.action.detect_status(ret)
+        self.assertTrue(OctopathStatus.is_menu(status))
+        self.assertTrue(OctopathStatus.is_free(status))
+        self.assertFalse(OctopathStatus.is_combat(status))
 
     def test_check_combat(self):
         image_path = Path(TEST_DATA_DIR, "image", "octopath", "combat.png")
-        config_path = Path(TEST_DATA_DIR, "config", "octopath.json")
-        config = json.load(open(config_path))
-        command = OctopathCheckStatusCommand(config, image_path)
-        ret = command.run()
-        self.assertTrue(ret.success)
-        self.assertEqual(ret.status, "success")
-        self.assertIsNotNone(ret.obj)
-        obj:OctopathCheckStatusRet = ret.obj
-        self.assertTrue(OctopathStatus.is_combat(obj.status))
-        self.assertFalse(OctopathStatus.is_menu(obj.status))
-        self.assertTrue(OctopathStatus.is_free(obj.status))
+        ret = self.action.ocr(image_path)
+        status = self.action.detect_status(ret)
+        self.assertTrue(OctopathStatus.is_combat(status))
+        self.assertFalse(OctopathStatus.is_menu(status))
+        self.assertTrue(OctopathStatus.is_free(status))
 
     def test_check_combating(self):
         image_path = Path(TEST_DATA_DIR, "image", "octopath", "combating.png")
-        config_path = Path(TEST_DATA_DIR, "config", "octopath.json")
-        config = json.load(open(config_path))
-        command = OctopathCheckStatusCommand(config, image_path)
-        ret = command.run()
-        self.assertTrue(ret.success)
-        self.assertEqual(ret.status, "success")
-        self.assertIsNotNone(ret.obj)
-        obj:OctopathCheckStatusRet = ret.obj
-        self.assertTrue(OctopathStatus.is_combat(obj.status))
-        self.assertFalse(OctopathStatus.is_menu(obj.status))
-        self.assertFalse(OctopathStatus.is_free(obj.status))
+        ret = self.action.ocr(image_path)
+        status = self.action.detect_status(ret)
+        self.assertTrue(OctopathStatus.is_combat(status))
+        self.assertFalse(OctopathStatus.is_menu(status))
+        self.assertFalse(OctopathStatus.is_free(status))
 
     def test_check_end_of_combat(self):
         image_path = Path(TEST_DATA_DIR, "image", "octopath", "end_of_combat.png")
-        config_path = Path(TEST_DATA_DIR, "config", "octopath.json")
-        config = json.load(open(config_path))
-        command = OctopathCheckStatusCommand(config, image_path)
-        ret = command.run()
-        self.assertTrue(ret.success)
-        self.assertEqual(ret.status, "success")
-        self.assertIsNotNone(ret.obj)
-        obj:OctopathCheckStatusRet = ret.obj
-        self.assertTrue(OctopathStatus.is_free(obj.status))
-        self.assertTrue(OctopathStatus.is_combat(obj.status))
-        self.assertFalse(OctopathStatus.is_menu(obj.status))
-        self.assertFalse(OctopathStatus.is_dialog(obj.status))
-        self.assertFalse(OctopathStatus.is_other(obj.status))
-        self.assertFalse(OctopathStatus.is_unknown(obj.status))
-        self.assertEqual(obj.status, OctopathStatus.Free.value | OctopathStatus.Combat.value | OctopathStatus.Conclusion.value)
+        ret = self.action.ocr(image_path)
+        status = self.action.detect_status(ret)
+        self.assertTrue(OctopathStatus.is_free(status))
+        self.assertTrue(OctopathStatus.is_combat(status))
+        self.assertFalse(OctopathStatus.is_menu(status))
+        self.assertFalse(OctopathStatus.is_dialog(status))
+        self.assertFalse(OctopathStatus.is_other(status))
+        self.assertFalse(OctopathStatus.is_unknown(status))
+        self.assertEqual(
+            status,
+            OctopathStatus.Free.value
+            | OctopathStatus.Combat.value
+            | OctopathStatus.Conclusion.value,
+        )
