@@ -1,41 +1,40 @@
-from abc import abstractmethod
-import pyautogui as pyautogui
-from ...base import BaseCommand, CommandRet, CommandRetStatus
-import time
-import timeout_decorator
-from ...base import BaseGUI
+from ...base import BaseCommand, BaseTaskCtx, TextPosition
+from ..status import OctopathStatus
+from ...base.gui import BaseGUI
 
 
-class BaseOctCommand(BaseCommand):
-    def __init__(self, config, gui: BaseGUI = None, *args, **kwargs):
-        super().__init__(config, gui, *args, **kwargs)
+class BaseOctopathCommand(BaseCommand):
+    def __init__(self, config: dict, ctx: BaseTaskCtx, gui: BaseGUI = None):
+        super().__init__(config=config, ctx=ctx, gui=gui)
 
-    @abstractmethod
-    def run_impl(self) -> object:
+    def run(self):
         raise NotImplementedError
 
-    def run(self) -> CommandRet:
-        ret: CommandRet = CommandRet(False, CommandRetStatus.NOT_RUN, 0)
-        # 记录开始时间
-        start_time = time.time()
-        # 执行具体的操作
-        # 如果超时且break_if_timeout为True，则退出
-        try:
-            ret.obj = self.run_impl()
-            ret.success = True
-            ret.status = CommandRetStatus.SUCCESS
-        except timeout_decorator.timeout_decorator.TimeoutError as e:
-            ret.success = False
-            ret.status = CommandRetStatus.TIMEOUT
-            ret.exp = e
-            self.logger.exception(f"{self.name}执行超时")
-        except Exception as e:
-            ret.success = False
-            ret.status = CommandRetStatus.EXCEPTION
-            ret.exp = e
-            self.logger.exception(f"{self.name}执行异常")
-        finally:
-            ellipsis = time.time() - start_time
-            ret.ellipsis = ellipsis
-            self.logger.debug(f"{self.name}执行完成: {time.time() - start_time}")
-        return ret
+    def detect_status(self, ocr_result: list[TextPosition]):
+        # check the status by the text
+        status = OctopathStatus.Unknown.value
+        ocr_result: list[TextPosition] = ocr_result or self.ctx.cur_ocr_result
+        for pos in ocr_result:
+            if "菜单" in pos.text:
+                self.logger.debug(f"主菜单: {pos.text}")
+                status |= OctopathStatus.Menu.value | OctopathStatus.Free.value
+            if "其他" in pos.text:
+                self.logger.debug(f"其他菜单: {pos.text}")
+                status |= OctopathStatus.Other.value | OctopathStatus.Free.value
+            if "回合" in pos.text:
+                self.logger.debug(f"战斗中: {pos.text}")
+                status |= OctopathStatus.Combat.value
+            if "战斗结算" in pos.text:
+                self.logger.debug(f"结算: {pos.text}")
+                status |= (
+                    OctopathStatus.Conclusion.value
+                    | OctopathStatus.Free.value
+                    | OctopathStatus.Combat.value
+                )
+
+        for pos in ocr_result:
+            if "攻击" in pos.text and OctopathStatus.is_combat(status):
+                self.logger.debug(f"战斗待命: {pos.text}")
+                status |= OctopathStatus.Free.value
+
+        return status
