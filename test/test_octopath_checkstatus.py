@@ -23,7 +23,7 @@ class TestOctopathCheckStatus(unittest.TestCase):
         super().__init__(methodName)
         config_path = Path(TEST_DATA_DIR, "config", "octopath.json")
         config = json.load(open(config_path))
-        ctx = OctopathTaskCtx()
+        ctx = OctopathTaskCtx(config)
         self.cmd = BaseOctopathCommand(config, ctx)
 
     def test_check_status(self, mock=None):

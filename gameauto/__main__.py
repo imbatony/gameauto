@@ -26,6 +26,12 @@ def main():
 
     game = args.game
     task = args.task
+
+    # 检查系统是否为Windows
+    if sys.platform != "win32":
+        print("GameAuto只支持Windows系统")
+        return
+
     # 检查task是否是自定义脚本文件
     custom_script = False
     if task.endswith(".txt"):

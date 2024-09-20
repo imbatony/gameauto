@@ -2,10 +2,9 @@ from abc import abstractmethod
 import os
 import time
 from ..utils import get_logger
-from .constants import ANDRIOD_EMULATOR_NAME
 from .gui import RealGUI, BaseGUI
 from .ctx import BaseTaskCtx
-from .position import TextPosition
+from .tuples import TxtBox
 
 
 class BaseCommand(object):
@@ -28,12 +27,6 @@ class BaseCommand(object):
 
     def run(self):
         raise NotImplementedError
-
-    def active_app(self):
-        self.logger.debug(f"激活应用")
-        appname = self.config.get("appname", ANDRIOD_EMULATOR_NAME)
-        app = self.gui.active_app(appname)
-        self.ctx.update_app(app)
 
     def get_app_screen_shot(self) -> str:
         self.logger.debug(f"截取app窗口的屏幕截图")
@@ -69,11 +62,18 @@ class BaseCommand(object):
         """
         raise NotImplementedError
 
-    def ocr(self, image_path) -> list[TextPosition]:
+    def ocr(self, image_path) -> list[TxtBox]:
         list = self.gui.ocr(image_path)
+        list_with_offset = []
         for idx in range(len(list)):
             line = list[idx]
             # 需要增加实际的应用的偏移量
-            line.x += self.ctx.x
-            line.y += self.ctx.y
-        return list
+            line_with_offset = TxtBox(
+                text=line.text,
+                left=line.left + self.ctx.x,
+                top=line.top + self.ctx.y,
+                width=line.width,
+                height=line.height,
+            )
+            list_with_offset.append(line_with_offset)
+        return list_with_offset

@@ -1,4 +1,4 @@
-from ...base import BaseCommand, BaseTaskCtx, TextPosition
+from ...base import BaseCommand, BaseTaskCtx, TxtBox
 from ..status import OctopathStatus
 from ...base.gui import BaseGUI
 
@@ -10,10 +10,10 @@ class BaseOctopathCommand(BaseCommand):
     def run(self):
         raise NotImplementedError
 
-    def detect_status(self, ocr_result: list[TextPosition]):
+    def detect_status(self, ocr_result: list[TxtBox]):
         # check the status by the text
         status = OctopathStatus.Unknown.value
-        ocr_result: list[TextPosition] = ocr_result or self.ctx.cur_ocr_result
+        ocr_result: list[TxtBox] = ocr_result or self.ctx.cur_ocr_result
         for pos in ocr_result:
             if "菜单" in pos.text:
                 self.logger.debug(f"主菜单: {pos.text}")
