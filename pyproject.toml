@@ -7,7 +7,8 @@ authors = [
 dependencies = [
     "pyautogui",
     "timeout-decorator==0.5.0",
-    "cnocr"
+    "cnocr",
+    "colorlog"
 ]
 description = "A simple game automation library"
 readme = "README.md"

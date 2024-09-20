@@ -1,8 +1,11 @@
+import os
 from ..utils import get_logger
 from ..gameconstants import APP_NAME
 from .tuples import TxtBox
+from .gui import BaseGUI, RealGUI
 from pygetwindow import (
     Window,
+    Win32Window,
     getWindowsWithTitle,
 )
 
@@ -20,7 +23,7 @@ class BaseTaskCtx(object):
     # 最大历史ocr结果记录长度
     max_ocr_results_len = 10
 
-    def __init__(self, config: dict):
+    def __init__(self, config: dict, gui: BaseGUI = None):
         self.app: Window = None
         # 截图
         self.his_screenshots: list[str] = []
@@ -30,11 +33,16 @@ class BaseTaskCtx(object):
         self.cur_ocr_result: list[TxtBox] = []
         self.his_ocr_results: list[list[TxtBox]] = []
         self.logger = get_logger(self.__class__.__name__, config)
+        self.config = config
+        # 偏移量, 用于调整窗口坐标, 排除窗口边框等
+        self.x_offset = config.get("game", {}).get("x_offset", 0)
+        self.y_offset = config.get("game", {}).get("y_offset", 0)
+        self.gui = gui or RealGUI(config)
 
     def active_app(self) -> bool:
-        self.logger.debug(f"激活应用")
-        appname = self.config.get("appname", APP_NAME)
-        apps = getWindowsWithTitle(appname)
+        appname = self.config.get("game", {}).get("app_name", APP_NAME)
+        self.logger.debug(f"激活应用:{appname}")
+        apps: list[Win32Window] = getWindowsWithTitle(appname)
         if not apps or len(apps) == 0:
             self.logger.error(f"未找到应用:{appname}")
             return False
@@ -43,40 +51,45 @@ class BaseTaskCtx(object):
             self.logger.warning(f"找到多个应用:{appname}, 取第一个")
         app = apps[0]
         self.update_app(app)
+        app.show()
         app.activate()
         return True
 
     @property
-    def x(self):
+    def left(self):
         if not self.app:
-            return 0
-        return self.app.left
+            return self.x_offset
+        return self.app.left + self.x_offset
 
     @property
-    def y(self):
+    def top(self):
         if not self.app:
-            return 0
-        return self.app.top
+            return self.y_offset
+        return self.app.top + self.y_offset
 
     @property
     def width(self):
         if not self.app:
             return 0
-        return self.app.width
+        return self.app.width - self.x_offset
 
     @property
     def height(self):
         if not self.app:
             return 0
-        return self.app.height
+        return self.app.height - self.y_offset
 
     def update_app(self, app):
         self.app = app
         return self
 
-    def update_screenshot(self, screenshot):
+    def update_screenshot(self, screenshot, delete_old=True):
         if len(self.his_screenshots) >= self.max_screenshots_len:
-            self.his_screenshots.pop(0)
+            path = self.his_screenshots.pop(0)
+            # 删除文件
+            if delete_old and os.path.exists(path):
+                os.remove(path)
+
         self.his_screenshots.append(screenshot)
         self.cur_screenshot = screenshot
         return self

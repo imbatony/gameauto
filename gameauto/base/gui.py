@@ -1,10 +1,9 @@
 from abc import abstractmethod
 import time
 import pyautogui
-from .tuples import TxtBox
+from .tuples import TxtBox, Point
 from ..ocr import cnocr
 from ..utils import get_logger
-from pyscreeze import center, pixel, pixelMatchesColor, screenshot
 
 
 class BaseGUI(object):
@@ -27,6 +26,13 @@ class BaseGUI(object):
     def ocr(self, image_path) -> list[TxtBox]:
         """
         OCR识别图片
+        """
+        pass
+
+    @abstractmethod
+    def click(self, p: Point, duration: float = 0.0):
+        """
+        点击
         """
         pass
 
@@ -61,7 +67,8 @@ class RealGUI(BaseGUI):
         """
         截图
         """
-        screenshot(filename, region)
+        self.logger.debug(f"截图: {filename}, {region}")
+        pyautogui.screenshot(filename, region)
 
     def ocr(self, image_path) -> list[TxtBox]:
         """
@@ -78,3 +85,10 @@ class RealGUI(BaseGUI):
             ret.append(txt_box)
         self.logger.debug(f"OCR识别耗时: {time.time() - start_time}")
         return ret
+
+    def click(self, p: Point, duration: float = 0.0):
+        """
+        点击
+        """
+        self.logger.debug(f"点击: {p}")
+        pyautogui.click(p.x, p.y, duration=duration)

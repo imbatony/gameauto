@@ -1,9 +1,7 @@
 from abc import abstractmethod
 from enum import Enum
 from typing import Any
-from ..utils import get_logger
 from .ctx import BaseTaskCtx
-from .gui import RealGUI, BaseGUI
 
 
 class ActionRetStatus(Enum):
@@ -32,7 +30,7 @@ class ActionRet(object):
         return f"CommandRet<status={self.status}, success={self.success}, ellipsis={self.ellipsis}, obj={self.obj}>"
 
 
-class BaseAction(object):
+class BaseAction:
     """
     动作基类
     动作需要执行一系列操作，比如点击战斗按钮，滑动屏幕等
@@ -41,16 +39,9 @@ class BaseAction(object):
     动作是游戏自动化的最小执行单元
     """
 
-    def __init__(self, config: dict, gui: BaseGUI = None, *args, **kwargs):
-        self.name = self.__class__.__name__
-        self.logger = get_logger(self.name, config)
-        self.config = config
-        self.gui = gui or RealGUI(config)
-        self.args = args
-        self.kwargs = kwargs
-
+    @classmethod
     @abstractmethod
-    def run(self, ctx: BaseTaskCtx) -> ActionRet:
+    def run(cls, ctx: BaseTaskCtx, *args, **kargs) -> ActionRet:
         """
         执行动作
         """

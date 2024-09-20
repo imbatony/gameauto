@@ -39,20 +39,9 @@ class GameAuto(object):
 
     def read_config(self, config):
         import json
-        from .base.constants import ANDRIOD_EMULATOR_NAME
 
         # If the config file is not provided, use the default config
-        default_config = {
-            "app": {
-                "emulator": ANDRIOD_EMULATOR_NAME,
-            },
-            "logging": {
-                "level": "INFO",
-                "format": "%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-                "file": None,
-            },
-            "ocr": {"use_gpu": False, "gpu_id": 0},
-        }
+        default_config = {}
         if not config:
             config = "gameauto.json"
 
