@@ -11,7 +11,7 @@ ICON_IMAGE_DIR = Path(IMAGE_DIR, "icons")
 ASSET = collections.namedtuple("ASSET", ["name", "type"])
 
 
-def get_asset_path(asset: ASSET) -> str:
+def getAssetPath(asset: ASSET) -> str:
     if asset.type == "map":
         return str(Path(MAP_IMAGE_DIR, asset.name))
     elif asset.type == "icon":
@@ -21,3 +21,5 @@ def get_asset_path(asset: ASSET) -> str:
 
 
 RELATIVE_POS = collections.namedtuple("RELATIVE_POS", ["x_ratio", "y_ratio"])
+
+ICON = collections.namedtuple("ICON", ["asset", "relative_pos"])

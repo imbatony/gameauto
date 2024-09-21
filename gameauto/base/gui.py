@@ -53,6 +53,7 @@ class BaseGUI(object):
         region: Box,
         confidence=None,
         grayscale: bool | None = None,
+        center: bool = False,  # 用于在多个位置中选择最靠近中心的位置
     ) -> Point:
         """
         识别图片位置
@@ -79,6 +80,7 @@ class RealGUI(BaseGUI):
     真实GUI类,用于实现真实的游戏交互操作
     通过pyautogui实现点击、拖拽、截图
     通过cnocr实现OCR识别
+    TODO: 未来可以支持通过adb实现手机端的操作以及与模拟器的交互
     """
 
     def __init__(self, config: dict):
@@ -129,22 +131,51 @@ class RealGUI(BaseGUI):
         pyautogui.mouseUp()
 
     def locateCenterOnScreen(
-        self, image_path: str, region: Box, confidence, grayscale: bool | None
+        self,
+        image_path: str,
+        region: Box,
+        confidence,
+        grayscale: bool | None,
+        center: bool = False,  # 用于在多个位置中选择最靠近中心的位置
     ) -> Point:
         """
         识别图片位置
         """
         self.logger.debug(f"识别图片位置: {image_path}")
         try:
-            pos = pyautogui.locateCenterOnScreen(
-                image_path, region=region, confidence=confidence, grayscale=grayscale
-            )
+            pos = None
+            if not center:
+                pos = pyautogui.locateCenterOnScreen(
+                    image_path,
+                    region=region,
+                    confidence=confidence,
+                    grayscale=grayscale,
+                )
+            else:
+                # 找到所有位置
+                pos_generator = pyautogui.locateAllOnScreen(
+                    image_path,
+                    region=region,
+                    confidence=confidence,
+                    grayscale=grayscale,
+                )
+                if pos_generator is None:
+                    return None
+                # 选择最靠近中心的位置
+                center_pos = Point(region[0] + region[2] / 2, region[1] + region[3] / 2)
+                min_distance = 999999
+                for p in pos_generator:
+                    # 计算距离
+                    distance = (p[0] - center_pos.x) ** 2 + (p[1] - center_pos.y) ** 2
+                    if distance < min_distance:
+                        min_distance = distance
+                        pos = p
             if pos is None:
                 self.logger.debug(f"找不到图片{image_path}")
                 return None
             else:
                 self.logger.debug(f"找到图片{image_path}位置: {pos}")
                 return Point(pos[0], pos[1])
-        except Exception as e:
-            self.logger.error(f"识别图片位置失败: {e}")
+        except Exception:
+            self.logger.exception(f"识别图片位置异常")
             return None

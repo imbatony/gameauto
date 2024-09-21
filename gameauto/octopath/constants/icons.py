@@ -1,8 +1,5 @@
-import collections
 from enum import Enum
-from .assets import ASSET, RELATIVE_POS
-
-ICON = collections.namedtuple("ICON", ["asset", "relative_pos"])
+from .assets import ASSET, RELATIVE_POS, ICON
 
 
 class IconName(Enum):
@@ -22,8 +19,27 @@ class IconName(Enum):
     EXIT = "退出"
 
     CONFORM_GOTO = "前往这里"  # 用于确认地图点击
+
     DIALOG_YES = "对话-是"
     DIALOG_NO = "对话-否"
+    DIALOG_CONFIRM = "对话-确定"
+
+    MINI_MAP = "小地图"
+
+    WORLD_NORMAL = "现世"
+    WORLD_HELL = "边狱"
+
+    HOTEL_IN_MINI_MAP = "旅馆"
+    BED = "床"
+
+    MAP_WILD_GORGE = "野外-峡谷"
+    MAP_WILD_PALACE = "野外-宫殿"
+    MAP_WILD_CAVE = "野外-洞窟"
+    MAP_WILD_FOREST = "野外-森林"
+    MAP_WILD_SITE = "野外-遗迹"
+    MAP_WILD_RUINS = "野外-废墟"
+
+    MAP_WILD_GORGE_HELL = "野外-峡谷-边狱"
 
 
 TOP_BUTTON_Y_RATIO = 20 / 720
@@ -57,10 +73,23 @@ icons: dict[IconName, ICON] = {
     IconName.CONFORM_GOTO: ICON(None, RELATIVE_POS(1040 / 1280, 630 / 720)),
     IconName.DIALOG_NO: ICON(None, RELATIVE_POS(480 / 1280, 480 / 720)),
     IconName.DIALOG_YES: ICON(None, RELATIVE_POS(800 / 1280, 480 / 720)),
+    IconName.DIALOG_CONFIRM: ICON(None, RELATIVE_POS(640 / 1280, 480 / 720)),
+    IconName.MINI_MAP: ICON(None, RELATIVE_POS(1000 / 1280, 100 / 720)),
+    IconName.WORLD_NORMAL: ICON(None, RELATIVE_POS(90 / 1280, 160 / 720)),
+    IconName.WORLD_HELL: ICON(None, RELATIVE_POS(90 / 1280, 260 / 720)),
+    IconName.HOTEL_IN_MINI_MAP: ICON(ASSET("hotel_in_mini_map.png", "icon"), None),
+    IconName.BED: ICON(ASSET("bed.png", "icon"), None),
+    IconName.MAP_WILD_GORGE: ICON(ASSET("wild_gorge.png", "map"), None),
+    IconName.MAP_WILD_PALACE: ICON(ASSET("wild_palace.png", "map"), None),
+    IconName.MAP_WILD_CAVE: ICON(ASSET("wild_cave.png", "map"), None),
+    IconName.MAP_WILD_FOREST: ICON(ASSET("wild_forest.png", "map"), None),
+    IconName.MAP_WILD_SITE: ICON(ASSET("wild_site.png", "map"), None),
+    IconName.MAP_WILD_RUINS: ICON(ASSET("wild_ruins.png", "map"), None),
+    IconName.MAP_WILD_GORGE_HELL: ICON(ASSET("wild_gorge_hell.png", "map"), None),
 }
 
 
-def get_icon_by_name(name: IconName) -> ICON:
+def getIconByIconName(name: IconName) -> ICON:
     if name in icons:
         return icons[name]
     return None

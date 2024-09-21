@@ -3,9 +3,9 @@ from ...base import Point
 from ..ctx import OctopathTaskCtx
 from ..constants import (
     ICON,
-    get_icon_by_name,
+    getIconByIconName,
     IconName,
-    get_asset_path,
+    getAssetPath,
     RELATIVE_POS,
 )
 
@@ -25,15 +25,27 @@ def _caculate_click_pos(pos: RELATIVE_POS, ctx: OctopathTaskCtx) -> Point:
 
 class ClickAction(BaseOctAction):
     @classmethod
-    def run_impl(cls, ctx: OctopathTaskCtx, pos: Point, duration: float = 0.1):
+    def run_impl(cls, ctx: OctopathTaskCtx, pos: Point = None, duration: float = 0.4):
+        if pos is None:
+            # 如果没有指定位置, 默认点击屏幕中心, 用于跳过对话等操作
+            pos = Point(ctx.left + ctx.width // 2, ctx.top + ctx.height // 2)
+
         ctx.gui.touch(pos, duration=duration)
         return None
 
 
 class ClickIconAction(BaseOctAction):
     @classmethod
-    def run_impl(cls, ctx: OctopathTaskCtx, icon_name: IconName, duration: float = 0.1):
-        icon: ICON = get_icon_by_name(icon_name)
+    def run_impl(
+        cls,
+        ctx: OctopathTaskCtx,
+        icon_name: IconName,
+        duration: float = 0.1,
+        grayscale=True,
+        confidence=0.8,
+        center=False,
+    ):
+        icon: ICON = getIconByIconName(icon_name)
         if icon is None:
             raise ActionRunError(f"找不到图标{icon_name.value}")
 
@@ -44,11 +56,37 @@ class ClickIconAction(BaseOctAction):
             return None
 
         # 如果没有相对位置, 通过图片定位找到图标位置,然后点击
-        pic_path = get_asset_path(icon.asset)
+        pic_path = getAssetPath(icon.asset)
+        pos = None
         pos = ctx.gui.locateCenterOnScreen(
-            pic_path, confidence=0.8, grayscale=True, region=ctx.region
+            pic_path,
+            confidence=confidence,
+            grayscale=grayscale,
+            region=ctx.region,
+            center=center,
         )
+
         if pos is None:
             raise ActionRunError(f"找不到图标{icon_name.value}")
         ctx.gui.touch(pos)
         return None
+
+
+class ClickCenterIconAction(BaseOctAction):
+    @classmethod
+    def run_impl(
+        cls,
+        ctx: OctopathTaskCtx,
+        icon_name: IconName,
+        duration: float = 0.1,
+        grayscale=True,
+        confidence=0.8,
+    ):
+        return ClickIconAction.run_impl(
+            ctx=ctx,
+            icon_name=icon_name,
+            duration=duration,
+            grayscale=grayscale,
+            confidence=confidence,
+            center=True,
+        )

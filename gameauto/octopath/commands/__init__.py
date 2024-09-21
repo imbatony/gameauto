@@ -2,8 +2,10 @@ from __future__ import absolute_import
 from typing import Type
 
 from .base import *
-from .change_town import *
+from .change_place import *
 from .force import *
+from .enter_hotel_sleep import *
+from .test import *
 import inspect
 
 

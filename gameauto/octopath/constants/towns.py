@@ -1,6 +1,6 @@
 import collections
 from enum import Enum
-from .assets import ASSET
+from .icons import IconName
 
 
 TOWN = collections.namedtuple("TOWN", ["name", "world", "directly", "keyword", "asset"])
@@ -20,8 +20,13 @@ town_names: dict[str, TOWN] = {
 }
 
 
-def get_town_by_name(name: str) -> TOWN:
+def getWorldIconNameByTown(town: TOWN) -> IconName:
+    if town.world == World.NORMAL:
+        return IconName.WORLD_NORMAL
+    return IconName.WORLD_HELL
 
+
+def getTownByName(name: str) -> TOWN:
     if name in town_names:
         return town_names[name]
     return None
