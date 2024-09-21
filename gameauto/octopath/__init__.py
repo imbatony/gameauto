@@ -46,4 +46,4 @@ class OctoPathGameAuto(GameAutoBase):
         ]
 
     def run_script(self, script_content: str):
-        print("暂不支持自定义脚本")
+        ScriptOctopathTask(self.config, script_content).run()

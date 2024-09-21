@@ -26,11 +26,19 @@ class GameAuto(object):
         # 逐行读取脚本文件
         # 当行首为#时，跳过该行
         content = ""
-        with open(script, "r") as f:
-            for line in f:
-                if line.startswith("#"):
-                    continue
-                content += line
+
+        try:
+            with open(script, "r", encoding="utf-8") as f:
+                for line in f:
+                    if line.startswith("#"):
+                        continue
+                    content += line
+        except UnicodeDecodeError as e:
+            self.logger.error(f"读取脚本文件失败,请将文件保存为UTF-8格式: {script}")
+            return
+        except Exception as e:
+            self.logger.error(f"读取脚本文件失败: {script}")
+            return
 
         self.gameauto.run_script(content)
 

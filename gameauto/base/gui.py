@@ -1,7 +1,7 @@
 from abc import abstractmethod
 import time
 import pyautogui
-from .tuples import TxtBox, Point
+from .tuples import TxtBox, Point, Box
 from ..ocr import cnocr
 from ..utils import get_logger
 
@@ -30,9 +30,32 @@ class BaseGUI(object):
         pass
 
     @abstractmethod
-    def click(self, p: Point, duration: float = 0.0):
+    def click(
+        self, p: Point, duration: float = 0.2, button: str = "left", tween="linear"
+    ):
         """
         点击
+        """
+        pass
+
+    @abstractmethod
+    def touch(self, p: Point, duration: float = 0.2):
+        """
+        触摸, 与click相比点击释放有延迟
+        更适用于模拟触摸屏幕
+        """
+        pass
+
+    @abstractmethod
+    def locateCenterOnScreen(
+        self,
+        image_path: str,
+        region: Box,
+        confidence=None,
+        grayscale: bool | None = None,
+    ) -> Point:
+        """
+        识别图片位置
         """
         pass
 
@@ -86,9 +109,42 @@ class RealGUI(BaseGUI):
         self.logger.debug(f"OCR识别耗时: {time.time() - start_time}")
         return ret
 
-    def click(self, p: Point, duration: float = 0.0):
+    def click(self, p: Point, duration: float = 0.2, button: str = "left"):
         """
         点击
         """
         self.logger.debug(f"点击: {p}")
-        pyautogui.click(p.x, p.y, duration=duration)
+        pyautogui.click(p.x, p.y, duration=duration, button=button)
+
+    def touch(self, p: Point, duration: float = 0.2):
+        """
+        触摸, 与click的区别在于不需要指定button,并且按键有持续时间
+        """
+        self.logger.debug(f"触摸: {p}")
+        # 先移动到目标位置
+        pyautogui.moveTo(x=p.x, y=p.y, duration=duration)
+        # 再按下
+        pyautogui.mouseDown(duration=duration)
+        # 再抬起
+        pyautogui.mouseUp()
+
+    def locateCenterOnScreen(
+        self, image_path: str, region: Box, confidence, grayscale: bool | None
+    ) -> Point:
+        """
+        识别图片位置
+        """
+        self.logger.debug(f"识别图片位置: {image_path}")
+        try:
+            pos = pyautogui.locateCenterOnScreen(
+                image_path, region=region, confidence=confidence, grayscale=grayscale
+            )
+            if pos is None:
+                self.logger.debug(f"找不到图片{image_path}")
+                return None
+            else:
+                self.logger.debug(f"找到图片{image_path}位置: {pos}")
+                return Point(pos[0], pos[1])
+        except Exception as e:
+            self.logger.error(f"识别图片位置失败: {e}")
+            return None

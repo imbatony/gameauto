@@ -34,14 +34,15 @@ class BaseAction:
     """
     动作基类
     动作需要执行一系列操作，比如点击战斗按钮，滑动屏幕等
-    动作通常不关心当前的游戏状态, 也没有复杂的逻辑, 只是需要根据游戏状态计算坐标, 例如点击需要根据当前的游戏状态来判断点击的位置
+    动作通常不关心当前的游戏状态, 也没有复杂的逻辑
+    只是需要根据游戏状态计算坐标, 例如点击需要根据当前的游戏状态来判断点击的位置
     一个动作的执行结果是一个ActionRet对象
     动作是游戏自动化的最小执行单元
     """
 
     @classmethod
     @abstractmethod
-    def run(cls, ctx: BaseTaskCtx, *args, **kargs) -> ActionRet:
+    def run(cls, ctx: BaseTaskCtx, *args) -> ActionRet:
         """
         执行动作
         """

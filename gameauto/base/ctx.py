@@ -1,8 +1,9 @@
 import os
 from ..utils import get_logger
-from ..gameconstants import APP_NAME
+from ..gameconstants import APP_NAME, DEFAULT_APP_X_OFFSET, DEFAULT_APP_Y_OFFSET
 from .tuples import TxtBox
 from .gui import BaseGUI, RealGUI
+from .tuples import TxtBox, Point, Box
 from pygetwindow import (
     Window,
     Win32Window,
@@ -35,8 +36,12 @@ class BaseTaskCtx(object):
         self.logger = get_logger(self.__class__.__name__, config)
         self.config = config
         # 偏移量, 用于调整窗口坐标, 排除窗口边框等
-        self.x_offset = config.get("game", {}).get("x_offset", 0)
-        self.y_offset = config.get("game", {}).get("y_offset", 0)
+        self.x_offset = int(
+            config.get("game", {}).get("x_offset", DEFAULT_APP_X_OFFSET)
+        )
+        self.y_offset = int(
+            config.get("game", {}).get("y_offset", DEFAULT_APP_Y_OFFSET)
+        )
         self.gui = gui or RealGUI(config)
 
     def active_app(self) -> bool:
@@ -56,28 +61,36 @@ class BaseTaskCtx(object):
         return True
 
     @property
-    def left(self):
+    def left(self) -> int:
         if not self.app:
             return self.x_offset
         return self.app.left + self.x_offset
 
     @property
-    def top(self):
+    def top(self) -> int:
         if not self.app:
             return self.y_offset
         return self.app.top + self.y_offset
 
     @property
-    def width(self):
+    def width(self) -> int:
         if not self.app:
             return 0
         return self.app.width - self.x_offset
 
     @property
-    def height(self):
+    def height(self) -> int:
         if not self.app:
             return 0
         return self.app.height - self.y_offset
+
+    @property
+    def center(self) -> Point:
+        return Point(self.left + self.width // 2, self.top + self.height // 2)
+
+    @property
+    def region(self) -> Box:
+        return Box(self.left, self.top, self.width, self.height)
 
     def update_app(self, app):
         self.app = app

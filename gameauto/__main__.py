@@ -1,6 +1,7 @@
 import argparse
 import sys
 import time
+import os
 
 if __package__ is None and not getattr(sys, "frozen", False):
     # direct call of __main__.py
@@ -15,7 +16,9 @@ from gameauto import GameAuto
 def main():
     # 解析命令
     parser = argparse.ArgumentParser(prog="GameAuto")
-    parser.add_argument("game", type=str, help="游戏名称,如octopath")
+    parser.add_argument(
+        "--game", type=str, default="octopath", help="游戏名称,如octopath"
+    )
     parser.add_argument(
         "task", type=str, help="内建任务名称或者自定义脚本,如farming 或者 myscript.txt"
     )

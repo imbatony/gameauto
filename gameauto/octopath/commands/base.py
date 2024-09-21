@@ -1,13 +1,18 @@
 from abc import abstractmethod
+import collections
 from ...base import BaseCommand, BaseTaskCtx, TxtBox, CommandReturnCode
 from ..status import OctopathStatus
+from ..actions import EXE_ACTION, runActionChain
+from ..ctx import OctopathTaskCtx
 
 
 class BaseOctopathCommand(BaseCommand):
+
+    __alternate_names__ = []
+
     @classmethod
-    @abstractmethod
     def get_alternate_names(cls) -> list[str]:
-        raise NotImplementedError
+        return cls.__alternate_names__
 
     @classmethod
     @abstractmethod
@@ -47,6 +52,17 @@ class BaseOctopathCommand(BaseCommand):
                 status |= OctopathStatus.Free.value
 
         return status
+
+    @classmethod
+    def run_actions(
+        cls, ctx: OctopathTaskCtx, actions: list[EXE_ACTION]
+    ) -> CommandReturnCode:
+        command_name = cls.__alternate_names__[0]
+        ret = runActionChain(ctx, actions)
+        if not ret.success:
+            ctx.logger.error(f"{command_name}失败")
+            return CommandReturnCode.FAILED
+        return CommandReturnCode.SUCCESS
 
 
 class ChainedOctopathCommand(BaseOctopathCommand):
