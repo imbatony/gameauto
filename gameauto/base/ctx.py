@@ -2,7 +2,7 @@ import os
 from ..utils import get_logger
 from ..gameconstants import APP_NAME, DEFAULT_APP_X_OFFSET, DEFAULT_APP_Y_OFFSET
 from .tuples import TxtBox
-from .gui import BaseGUI, RealGUI
+from .gui import BaseGUI, getGUI
 from .tuples import TxtBox, Point, Box
 from pygetwindow import (
     Window,
@@ -42,7 +42,7 @@ class BaseTaskCtx(object):
         self.y_offset = int(
             config.get("game", {}).get("y_offset", DEFAULT_APP_Y_OFFSET)
         )
-        self.gui = gui or RealGUI(config)
+        self.gui = gui or getGUI(config)
 
     def active_app(self) -> bool:
         appname = self.config.get("game", {}).get("app_name", APP_NAME)

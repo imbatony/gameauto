@@ -20,7 +20,7 @@ ENERMY_IMAGE_DIR = Path(SRC_DIR, "gameauto", "octopath", "assets", "images", "en
 sys.path.append(str(TEST_DATA_DIR))
 importlib.invalidate_caches()
 
-from gameauto.base.gui import RealGUI, BaseGUI
+from gameauto.base.gui import getGUI, BaseGUI
 from gameauto.octopath.constants.enemy import EnemyName, getIconPath
 from gameauto.octopath.ctx import OctopathTaskCtx
 
@@ -30,7 +30,7 @@ class TestSearchImage(unittest.TestCase):
         super().__init__(methodName)
         config_path = Path(TEST_DATA_DIR, "config", "octopath.json")
         config = json.load(open(config_path))
-        self.gui = RealGUI(config)
+        self.gui = getGUI(config)
         self.ctx = OctopathTaskCtx(config)
 
     def test_locate(self):
