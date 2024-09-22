@@ -4,6 +4,7 @@ from ..ctx import OctopathTaskCtx
 from ..commands import get_command_type_by_name
 
 
+# TODO: 考虑替换为Jinja2模板的脚本
 class ScriptOctopathTask(BaseTask):
     def __init__(
         self,

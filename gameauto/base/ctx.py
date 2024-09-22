@@ -47,6 +47,7 @@ class BaseTaskCtx(object):
     def active_app(self) -> bool:
         appname = self.config.get("game", {}).get("app_name", APP_NAME)
         self.logger.debug(f"激活应用:{appname}")
+        # TODO: 将这个逻辑移到gui中，不应该在ctx中
         apps: list[Win32Window] = getWindowsWithTitle(appname)
         if not apps or len(apps) == 0:
             self.logger.error(f"未找到应用:{appname}")

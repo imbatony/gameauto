@@ -1,1 +1,1 @@
-# TODO: Add adb interface for gui module
+# TODO: 未来可以支持通过adb实现手机端的操作以及与模拟器的交互

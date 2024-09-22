@@ -25,7 +25,6 @@ class PYAutoGUI(BaseGUI):
     真实GUI类,用于实现真实的游戏交互操作
     通过pyautogui实现点击、拖拽、截图
     通过cnocr实现OCR识别
-    TODO: 未来可以支持通过adb实现手机端的操作以及与模拟器的交互
     """
 
     def __init__(self, config: dict):

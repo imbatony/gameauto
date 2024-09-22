@@ -20,7 +20,8 @@ class BaseOctopathCommand(BaseCommand):
 
     @classmethod
     def detect_status(cls, ctx: BaseTaskCtx, ocr_result: list[TxtBox] = None) -> int:
-        # check the status by the text
+        # 检测当前状态, 根据OCR结果判断当前状态
+        # TODO: 优化状态检测逻辑, 由于OCR识别结果不稳定, 而且耗时较长, 可以考虑使用其他方式检测状态，比如关键像素点颜色检测，或者使用opencv模板匹配等
         status = OctopathStatus.Unknown.value
         ocr_result: list[TxtBox] = ocr_result or ctx.cur_ocr_result
         for pos in ocr_result:
