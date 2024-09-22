@@ -60,6 +60,32 @@ class BaseGUI(object):
         """
         pass
 
+    @abstractmethod
+    def dragLeftRight(
+        self,
+        start: Point,
+        left: Point,
+        right: Point,
+        duration: float = 0.8,
+        single_duration: float = 0.2,
+    ):
+        """
+        拖拽
+        """
+        pass
+
+    @abstractmethod
+    def locate(needleImage, haystackImage, **kwargs) -> Point:
+        """
+        搜索匹配的图片位置
+
+        Args:
+            needleImage: 要搜索的图片
+            haystackImage: 被搜索的图片
+            **kwargs: 传递给pyautogui.locate函数的参数
+        """
+        pass
+
 
 def ocr_result_to_txt_box(ocr_result_line: dict) -> TxtBox:
     position = ocr_result_line["position"]
@@ -179,3 +205,35 @@ class RealGUI(BaseGUI):
         except Exception:
             self.logger.exception(f"识别图片位置异常")
             return None
+
+    def dragLeftRight(
+        self,
+        start: Point,
+        left: Point,
+        right: Point,
+        duration: float = 0.8,
+        single_duration=0.2,
+    ):
+        """
+        来回拖拽
+        """
+        pyautogui.moveTo(start)
+        pyautogui.mouseDown()
+        d_sum = 0
+        while d_sum < duration:
+            d_sum += single_duration * 4
+            pyautogui.moveTo(left, duration=single_duration)
+            pyautogui.moveTo(start, duration=single_duration)
+            pyautogui.moveTo(right, duration=single_duration)
+            pyautogui.moveTo(start, duration=single_duration)
+        pyautogui.mouseUp()
+
+    def locate(needleImage, haystackImage, **kwargs) -> Point:
+        """
+        搜索匹配的图片位置
+        """
+        box: Box = pyautogui.locate(needleImage, haystackImage, **kwargs)
+        if box is None:
+            return None
+        else:
+            return box.center

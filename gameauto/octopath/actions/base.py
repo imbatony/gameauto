@@ -58,6 +58,9 @@ EXE_ACTION = collections.namedtuple(
 def runActionChain(ctx: OctopathTaskCtx, actions: list[EXE_ACTION]) -> ActionRet:
     ret: ActionRet = ActionRet(False, ActionRetStatus.NOT_RUN, None, 0)
     for action in actions:
+        # 如果action为None，则跳过
+        if action is None:
+            continue
         action_cls: type[BaseOctAction] = action.action_cls
         ctx.logger.debug(f"执行操作: {action.desc}")
         ret: ActionRet = action_cls.run(ctx, *action.args)
@@ -67,6 +70,8 @@ def runActionChain(ctx: OctopathTaskCtx, actions: list[EXE_ACTION]) -> ActionRet
         if action.interval:
             ctx.logger.debug(f"等待: {action.interval}秒")
             time.sleep(action.interval)
+        elif action.interval == 0:
+            pass
         else:
-            time.sleep(ctx.action_interval)
+            time.sleep(ctx.action_default_interval)
     return ret

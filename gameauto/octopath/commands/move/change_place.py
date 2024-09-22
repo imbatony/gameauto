@@ -1,5 +1,5 @@
 from time import sleep
-from ..constants import (
+from ...constants import (
     TOWN,
     getTownByName,
     IconName,
@@ -7,17 +7,17 @@ from ..constants import (
     getWildByName,
     WILD,
 )
-from ...base.tuples import Point, TxtBox
-from .base import (
+from ....base.tuples import Point, TxtBox
+from ..base import (
     BaseOctopathCommand,
     CommandReturnCode,
     ChainedOctopathCommand,
 )
 
-from ..ctx import OctopathTaskCtx
-from ..status import OctopathStatus
-from .force import ForceExitToMenuCommand
-from ..actions import ClickIconAction, EXE_ACTION, ClickAction, ClickCenterIconAction
+from ...ctx import OctopathTaskCtx
+from ...status import OctopathStatus
+from ..force import ForceExitToMenuCommand
+from ...actions import ClickIconAction, EXE_ACTION, ClickAction, ClickCenterIconAction
 
 
 class ChangeTownCommand(BaseOctopathCommand):
@@ -50,16 +50,9 @@ class ChangeTownCommand(BaseOctopathCommand):
 
         world_icon_name = getWorldIconNameByTown(town)
 
-        code = cls.run_actions(
-            ctx,
-            [
-                EXE_ACTION("点击地图菜单", ClickIconAction, [IconName.MAP], 1),
-                EXE_ACTION("切换世界", ClickIconAction, [world_icon_name], 1),
-                EXE_ACTION(
-                    "点击缩小地图", ClickIconAction, [IconName.ZOOM_OUT_MAP], 0
-                ),  # 因为下一步需要OCR, 所以不需要等待
-            ],
-        )
+        # 切换到世界地图, 并缩小地图，以方便查找城镇
+        code = cls.click_map_and_zoom_out(ctx, world_icon_name)
+
         if code != CommandReturnCode.SUCCESS:
             ctx.logger.error("切换城镇失败")
             return code
@@ -132,14 +125,31 @@ class ChangeTownCommand(BaseOctopathCommand):
 
     @classmethod
     def click_city_pos(cls, ctx: OctopathTaskCtx, pos: Point):
-        code = cls.run_actions(
+        code = cls.runActions(
             ctx,
             [
-                EXE_ACTION("点击城镇", ClickAction, [pos, 0.5], 0.5),
+                EXE_ACTION("点击城镇", ClickAction, [pos, 0.5], 2),
                 EXE_ACTION(
-                    "点击前往这里", ClickIconAction, [IconName.CONFORM_GOTO], 0.8
+                    "点击前往这里",
+                    ClickIconAction,
+                    [IconName.MAPICON_SELECTED_BTN_GOTO],
+                    0.8,
                 ),
                 EXE_ACTION("点击确认", ClickIconAction, [IconName.DIALOG_YES], 10),
+            ],
+        )
+        return code
+
+    @classmethod
+    def click_map_and_zoom_out(cls, ctx: OctopathTaskCtx, world_icon_name: IconName):
+        code = cls.runActions(
+            ctx,
+            [
+                EXE_ACTION("点击地图菜单", ClickIconAction, [IconName.MAP], 1),
+                EXE_ACTION("切换世界", ClickIconAction, [world_icon_name], 1),
+                EXE_ACTION(
+                    "点击缩小地图", ClickIconAction, [IconName.ZOOM_OUT_MAP], 0
+                ),  # 因为下一步需要OCR, 所以不需要等待
             ],
         )
         return code
@@ -167,6 +177,7 @@ class ChangeToWildCommand(BaseOctopathCommand):
         code = CommandReturnCode.UNKNOWN
         ctx.logger.info("切换到野外 %s", wild_name)
         wild: WILD = getWildByName(wild_name)
+        wild_near_by_town: TOWN = getTownByName(wild.town_name_near_by)
         if wild is None:
             ctx.logger.error(f"未找到野外: {wild_name}")
             return CommandReturnCode.FAILED
@@ -177,12 +188,22 @@ class ChangeToWildCommand(BaseOctopathCommand):
             return CommandReturnCode.SUCCESS
 
         in_nearby_city = False
+        changeWoldAction: EXE_ACTION | None = None
 
         # 如果当前已经在附近城市中, 则无需切换城市
         if ctx.cur_town is not None:
             if ctx.cur_town.name == wild.town_name_near_by:
-                ctx.logger.info(f"当前已经在{ctx.cur_town.name}")
+                ctx.logger.info(f"当前已经在附近城市{ctx.cur_town.name}, 无需切换城市")
                 in_nearby_city = True
+            elif ctx.cur_town.keyword == wild_near_by_town.keyword:
+                # 如果当前城市和附近城市关键字相同, 则认为在大地图上坐标相近，可以直接定位到野外目标
+                # 例如: 克拉古斯比亚和边狱-克拉古斯比亚这两个城市关键字相同, 但是世界不同，切换野外时可以节省时间
+                ctx.logger.info(f"当前已经在附近镜像城市{ctx.cur_town.name}")
+                in_nearby_city = True
+                world_icon_name = getWorldIconNameByTown(wild_near_by_town)
+                changeWoldAction = EXE_ACTION(
+                    "切换世界", ClickIconAction, [world_icon_name], 1
+                )
 
         if not in_nearby_city:
             code = ChangeTownCommand.run(ctx, wild.town_name_near_by)
@@ -190,15 +211,19 @@ class ChangeToWildCommand(BaseOctopathCommand):
                 ctx.logger.error("切换城市失败")
                 return code
 
-        code = cls.run_actions(
+        code = cls.runActions(
             ctx,
             [
                 EXE_ACTION("点击地图菜单", ClickIconAction, [IconName.MAP], 1),
+                changeWoldAction,
                 EXE_ACTION(
                     "点击野外图标", ClickCenterIconAction, [wild.icon_name], 1
                 ),  # 点击野外图标
                 EXE_ACTION(
-                    "点击前往这里", ClickIconAction, [IconName.CONFORM_GOTO], 0.8
+                    "点击前往这里",
+                    ClickIconAction,
+                    [IconName.MAPICON_SELECTED_BTN_GOTO],
+                    0.8,
                 ),
                 EXE_ACTION("点击确认", ClickIconAction, [IconName.DIALOG_YES], 8),
             ],
@@ -211,3 +236,57 @@ class ChangeToWildCommand(BaseOctopathCommand):
         ctx.cur_town = None
         ctx.logger.info(f"切换到野外{wild_name}成功")
         return CommandReturnCode.SUCCESS
+
+
+class MoveViaMiniMapCommand(BaseOctopathCommand):
+    __alternate_names__ = ["小地图移动", "MoveViaMiniMap"]
+
+    @classmethod
+    def run(
+        cls,
+        ctx: OctopathTaskCtx,
+        target_pos_x_str: str,
+        target_pos_y_str: str,
+        move_duration_str: str = "5",
+        is_relative_str: str = "False",
+        relative_width_str: str = "1280",
+        relative_height_str: str = "720",
+    ) -> CommandReturnCode:
+        """
+        通过点击小地图，移动至指定位置
+        :param target_pos_x_str: 目标位置小地图x坐标
+        :param target_pos_y_str: 目标位置小地图y坐标
+        :param move_duration_str: 预计移动时间, 单位秒, 默认5
+        :param is_relative_str: 是否相对坐标, 当为True时, target_pos_x_str和target_pos_y_str为相对坐标, 需要根据当前游戏窗口大小进行转换
+        :param relative_width_str: 相对坐标宽度 默认1280
+        :param relative_height_str: 相对坐标高度 默认720
+        :return: 执行结果
+        """
+        target_pos_x = int(target_pos_x_str)
+        target_pos_y = int(target_pos_y_str)
+        is_relative = is_relative_str.lower() == "true"
+        relative_width = int(relative_width_str)
+        relative_height = int(relative_height_str)
+
+        if is_relative:
+            target_pos_x = int(target_pos_x * ctx.width / relative_width)
+            target_pos_y = int(target_pos_y * ctx.height / relative_height)
+
+        ctx.logger.info(f"移动至小地图坐标({target_pos_x}, {target_pos_y})")
+
+        move_duration = float(move_duration_str)
+
+        code = cls.runActions(
+            ctx,
+            [
+                EXE_ACTION("点击小地图", ClickIconAction, [IconName.MINI_MAP], 1),
+                EXE_ACTION(
+                    "点击目标位置开始移动",
+                    ClickAction,
+                    [Point(target_pos_x, target_pos_y), 0.5, False],
+                    move_duration,
+                ),
+            ],
+        )
+
+        return code

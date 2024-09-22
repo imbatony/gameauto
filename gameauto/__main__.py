@@ -70,11 +70,17 @@ def main():
         else:
             gameauto.run_script(task)
         end_time = time.time()  # 记录结束时间
-        print(f"任务{task}执行完成,耗时{end_time - start_time:.2f}秒")
+        if not custom_script:
+            print(f"任务{task}执行完成,耗时{end_time - start_time:.2f}秒")
+        else:
+            print(f"自定义脚本 {task}执行完成,耗时{end_time - start_time:.2f}秒")
     except KeyboardInterrupt:  # 捕捉 Ctrl + C 中断信号
         print("中断任务")
         end_time = time.time()  # 记录结束时间
-        print(f"任务{task}执行中断,耗时{end_time - start_time:.2f}秒")
+        if not custom_script:
+            print(f"任务{task}执行中断,耗时{end_time - start_time:.2f}秒")
+        else:
+            print(f"自定义脚本 {task}执行中断,耗时{end_time - start_time:.2f}秒")
         exit(0)
 
 

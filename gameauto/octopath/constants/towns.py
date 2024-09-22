@@ -14,6 +14,8 @@ class World(Enum):
 town_names: dict[str, TOWN] = {
     "瓦洛雷": TOWN("瓦洛雷", World.NORMAL, True, "瓦洛雷", None),
     "格兰波特": TOWN("格兰波特", World.NORMAL, True, "格兰波特", None),
+    "无名小镇": TOWN("无名小镇", World.NORMAL, True, "无名小镇", None),
+    "克拉古斯比亚": TOWN("克拉古斯比亚", World.NORMAL, True, "克拉古斯比亚", None),
     "边狱-克拉古斯比亚": TOWN(
         "边狱-克拉古斯比亚", World.HELL, True, "克拉古斯比亚", None
     ),

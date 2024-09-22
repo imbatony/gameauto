@@ -35,6 +35,14 @@ class ScriptOctopathTask(BaseTask):
         line_index = 0
         while line_index < len(lines):
             line = lines[line_index].strip()
+            # 如果是空行, 则跳过
+            if not line:
+                line_index += 1
+                continue
+            # 如果是注释, 则跳过
+            if line.startswith("#"):
+                line_index += 1
+                continue
             command, *args = line.split()
             # 如果命令为循环或者loop, 则执行循环
             if command == "loop" or command == "循环":

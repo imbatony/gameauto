@@ -1,5 +1,4 @@
 from abc import abstractmethod
-import collections
 from ...base import BaseCommand, BaseTaskCtx, TxtBox, CommandReturnCode
 from ..status import OctopathStatus
 from ..actions import EXE_ACTION, runActionChain
@@ -50,7 +49,7 @@ class BaseOctopathCommand(BaseCommand):
         return status
 
     @classmethod
-    def run_actions(
+    def runActions(
         cls, ctx: OctopathTaskCtx, actions: list[EXE_ACTION]
     ) -> CommandReturnCode:
         command_name = cls.__alternate_names__[0]

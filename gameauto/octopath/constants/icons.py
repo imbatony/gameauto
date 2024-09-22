@@ -1,5 +1,5 @@
 from enum import Enum
-from .assets import ASSET, RELATIVE_POS, ICON
+from .assets import ASSET, RELATIVE_POS, ICON, rpFrom720P
 
 
 class IconName(Enum):
@@ -18,19 +18,26 @@ class IconName(Enum):
     BACK = "返回"
     EXIT = "退出"
 
-    CONFORM_GOTO = "前往这里"  # 用于确认地图点击
+    MAPICON_SELECTED_BTN_GOTO = "前往这里"  # 用于确认地图点击
+    MAPICON_SELECTED_BTN_GET_ITEM = "道具回收"  # 用于点击确认回收道具
+    MAPICON_SELECTED_BTN_GOTO_2 = "前往这里"  # 用于确认地图点击, 只适用于无名小镇
 
     DIALOG_YES = "对话-是"
     DIALOG_NO = "对话-否"
     DIALOG_CONFIRM = "对话-确定"
+
+    DIALOG_GET_ITEM_YES = "对话-道具回收-是"
+    DIALOG_GET_ITEM_NO = "对话-道具回收-否"
+    DIALOG_GET_ITEM_CONFIRM = "对话-道具回收-确定"
 
     MINI_MAP = "小地图"
 
     WORLD_NORMAL = "现世"
     WORLD_HELL = "边狱"
 
-    HOTEL_IN_MINI_MAP = "旅馆"
+    HOTEL_MINI_MAP = "旅馆-小地图"
     BED = "床"
+    HOTEL = "旅馆"
 
     MAP_WILD_GORGE = "野外-峡谷"
     MAP_WILD_PALACE = "野外-宫殿"
@@ -70,15 +77,21 @@ icons: dict[IconName, ICON] = {
     IconName.ELF: ICON(None, RELATIVE_POS(get_x_ratio(10, 9), MENU_BUTTON_Y_RATIO)),
     IconName.BACK: ICON(None, RELATIVE_POS(50 / 1280, TOP_BUTTON_Y_RATIO)),
     IconName.EXIT: ICON(None, RELATIVE_POS(1230 / 1280, TOP_BUTTON_Y_RATIO)),
-    IconName.CONFORM_GOTO: ICON(None, RELATIVE_POS(1040 / 1280, 630 / 720)),
-    IconName.DIALOG_NO: ICON(None, RELATIVE_POS(480 / 1280, 480 / 720)),
-    IconName.DIALOG_YES: ICON(None, RELATIVE_POS(800 / 1280, 480 / 720)),
-    IconName.DIALOG_CONFIRM: ICON(None, RELATIVE_POS(640 / 1280, 480 / 720)),
-    IconName.MINI_MAP: ICON(None, RELATIVE_POS(1000 / 1280, 100 / 720)),
-    IconName.WORLD_NORMAL: ICON(None, RELATIVE_POS(90 / 1280, 160 / 720)),
-    IconName.WORLD_HELL: ICON(None, RELATIVE_POS(90 / 1280, 260 / 720)),
-    IconName.HOTEL_IN_MINI_MAP: ICON(ASSET("hotel_in_mini_map.png", "icon"), None),
+    IconName.MAPICON_SELECTED_BTN_GOTO: ICON(None, rpFrom720P(1040, 630)),
+    IconName.MAPICON_SELECTED_BTN_GET_ITEM: ICON(None, rpFrom720P(950, 630)),
+    IconName.MAPICON_SELECTED_BTN_GOTO_2: ICON(None, rpFrom720P(1150, 630)),
+    IconName.DIALOG_NO: ICON(None, rpFrom720P(480, 480)),
+    IconName.DIALOG_YES: ICON(None, rpFrom720P(800, 480)),
+    IconName.DIALOG_CONFIRM: ICON(None, rpFrom720P(640, 480)),
+    IconName.DIALOG_GET_ITEM_YES: ICON(None, rpFrom720P(800, 600)),
+    IconName.DIALOG_GET_ITEM_NO: ICON(None, rpFrom720P(480, 600)),
+    IconName.DIALOG_GET_ITEM_CONFIRM: ICON(None, rpFrom720P(640, 530)),
+    IconName.MINI_MAP: ICON(None, rpFrom720P(1000, 100)),
+    IconName.WORLD_NORMAL: ICON(None, rpFrom720P(90, 160)),
+    IconName.WORLD_HELL: ICON(None, rpFrom720P(90, 260)),
+    IconName.HOTEL_MINI_MAP: ICON(ASSET("hotel_mini_map.png", "icon"), None),
     IconName.BED: ICON(ASSET("bed.png", "icon"), None),
+    IconName.HOTEL: ICON(ASSET("hotel.png", "icon"), None),
     IconName.MAP_WILD_GORGE: ICON(ASSET("wild_gorge.png", "map"), None),
     IconName.MAP_WILD_PALACE: ICON(ASSET("wild_palace.png", "map"), None),
     IconName.MAP_WILD_CAVE: ICON(ASSET("wild_cave.png", "map"), None),
@@ -92,4 +105,11 @@ icons: dict[IconName, ICON] = {
 def getIconByIconName(name: IconName) -> ICON:
     if name in icons:
         return icons[name]
+    return None
+
+
+def getIconNameByName(name: str) -> IconName:
+    for k, v in icons.items():
+        if v.name == name:
+            return k
     return None
