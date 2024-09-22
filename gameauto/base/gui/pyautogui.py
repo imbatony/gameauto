@@ -20,7 +20,7 @@ def ocr_result_to_txt_box(ocr_result_line: dict) -> TxtBox:
     )
 
 
-class RealGUI(BaseGUI):
+class PYAutoGUI(BaseGUI):
     """
     真实GUI类,用于实现真实的游戏交互操作
     通过pyautogui实现点击、拖拽、截图

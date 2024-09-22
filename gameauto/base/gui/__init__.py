@@ -1,6 +1,6 @@
 from enum import Enum
 from .base import BaseGUI
-from .pyautogui import RealGUI
+from .pyautogui import PYAutoGUI
 
 
 class GUIType(Enum):
@@ -14,6 +14,6 @@ def getGUI(config: dict) -> BaseGUI:
     """
     gui_type = config.get("game", {}).get("gui", GUIType.DEFAULT.value)
     if gui_type == GUIType.DEFAULT.value:
-        return RealGUI(config)
+        return PYAutoGUI(config)
     else:
         raise ValueError(f"不支持的GUI类型:{gui_type}")
