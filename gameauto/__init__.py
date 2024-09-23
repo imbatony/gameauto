@@ -55,7 +55,7 @@ class GameAuto(object):
 
         if not os.path.exists(config):
             return default_config
-        with open(config, "r") as f:
+        with open(config, "r", encoding="utf-8") as f:
             config = json.load(f)
             # merge the default config with the provided config
             # the provided config will overwrite the default config

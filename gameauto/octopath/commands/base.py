@@ -26,7 +26,7 @@ class BaseOctopathCommand(BaseCommand):
         status = OctopathStatus.Unknown.value
         ocr_result: list[TxtBox] = ocr_result or ctx.cur_ocr_result
         for pos in ocr_result:
-            if "菜单" in pos.text or "商店" in pos.text or "地图" in pos.text:
+            if "菜单" in pos.text or "商店" in pos.text or "地图" in pos.text or "追忆" in pos.text or "游戏":
                 ctx.logger.debug(f"主菜单: {pos.text}")
                 status |= OctopathStatus.Menu.value | OctopathStatus.Free.value
             if "其他" in pos.text or "道具" in pos.text or "通知" in pos.text:
@@ -66,7 +66,7 @@ class BaseOctopathCommand(BaseCommand):
 
     @classmethod
     def runActionChain(cls, ctx: OctopathTaskCtx, *actions: ACTION) -> CommandReturnCode:
-        action_list = list(chain(*actions))
+        action_list = list(actions)
         return cls._runActions(ctx, action_list)
 
 

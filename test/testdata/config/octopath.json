@@ -8,7 +8,11 @@
         "gpu_id": 0
     },
     "game": {
-        "offset_x": 0,
-        "offset_y": 50
-    }
+        "app_name": "MuMu模拟器12",
+        "x_offset": 0,
+        "y_offset": 50,
+        "width": 1280,
+        "height": 720
+    },
+    "debug": true
 }

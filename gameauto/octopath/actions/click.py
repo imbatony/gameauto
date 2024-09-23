@@ -21,6 +21,8 @@ def _toAbsoluteForRelPos(pos: RELATIVE_POS, ctx: OctopathTaskCtx) -> Point:
     h = ctx.height
     y_offset = int(h * pos.y_ratio)
     x_offset = int(w * pos.x_ratio)
+    ctx.logger.debug(f"相对位置: {pos}, 绝对位置: ({x + x_offset}, {y + y_offset})")
+
     return Point(x + x_offset, y + y_offset)
 
 
@@ -74,7 +76,7 @@ class ClickIconAction(BaseOctAction):
         # 如果没有相对位置, 通过图片定位找到图标位置,然后点击
         pic_path = getAssetPath(icon.asset)
         pos = None
-        pos = ctx.gui.locateCenterOnScreen(
+        box = ctx.gui.locateCenterOnScreen(
             pic_path,
             confidence=confidence,
             grayscale=grayscale,
@@ -82,8 +84,10 @@ class ClickIconAction(BaseOctAction):
             center=center,
         )
 
-        if pos is None:
+        if box is None:
             raise ActionRunError(f"找不到图标{icon_name.value}")
+        else:
+            pos = box.center
         ctx.gui.touch(pos)
         return None
 
@@ -96,7 +100,7 @@ class ClickCenterIconAction(BaseOctAction):
         icon_name: IconName,
         duration: float = 0.1,
         grayscale=True,
-        confidence=0.8,
+        confidence=0.75,
     ):
         """
         点击最靠近屏幕中心的图标
