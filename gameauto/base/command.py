@@ -27,7 +27,7 @@ class BaseCommand:
 
     @classmethod
     @abstractmethod
-    def run(cls, ctx: BaseTaskCtx, *args) -> CommandReturnCode:
+    def run(cls, ctx: BaseTaskCtx, *args: str) -> CommandReturnCode:
         raise NotImplementedError
 
     @classmethod

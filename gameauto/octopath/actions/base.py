@@ -50,12 +50,10 @@ class BaseOctAction(BaseAction):
         return ret
 
 
-EXE_ACTION = collections.namedtuple(
-    "EXE_ACTION", ["desc", "action_cls", "args", "interval"]
-)
+ACTION = collections.namedtuple("ACTION", ["desc", "action_cls", "args", "interval"])
 
 
-def runActionChain(ctx: OctopathTaskCtx, actions: list[EXE_ACTION]) -> ActionRet:
+def runActionChain(ctx: OctopathTaskCtx, actions: list[ACTION]) -> ActionRet:
     ret: ActionRet = ActionRet(False, ActionRetStatus.NOT_RUN, None, 0)
     for action in actions:
         # 如果action为None，则跳过

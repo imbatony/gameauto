@@ -1,8 +1,9 @@
 from abc import abstractmethod
 from ...base import BaseCommand, BaseTaskCtx, TxtBox, CommandReturnCode
 from ..status import OctopathStatus
-from ..actions import EXE_ACTION, runActionChain
+from ..actions import ACTION, runActionChain
 from ..ctx import OctopathTaskCtx
+from itertools import chain
 
 
 class BaseOctopathCommand(BaseCommand):
@@ -36,11 +37,7 @@ class BaseOctopathCommand(BaseCommand):
                 status |= OctopathStatus.Combat.value
             if "结算" in pos.text:
                 ctx.logger.debug(f"结算: {pos.text}")
-                status |= (
-                    OctopathStatus.Conclusion.value
-                    | OctopathStatus.Free.value
-                    | OctopathStatus.Combat.value
-                )
+                status |= OctopathStatus.Conclusion.value | OctopathStatus.Free.value | OctopathStatus.Combat.value
 
         for pos in ocr_result:
             if "攻击" in pos.text and OctopathStatus.is_combat(status):
@@ -50,15 +47,27 @@ class BaseOctopathCommand(BaseCommand):
         return status
 
     @classmethod
-    def runActions(
-        cls, ctx: OctopathTaskCtx, actions: list[EXE_ACTION]
-    ) -> CommandReturnCode:
+    def runActions(cls, ctx: OctopathTaskCtx, actions: list[ACTION]) -> CommandReturnCode:
         command_name = cls.__alternate_names__[0]
         ret = runActionChain(ctx, actions)
         if not ret.success:
             ctx.logger.error(f"{command_name}失败")
             return CommandReturnCode.FAILED
         return CommandReturnCode.SUCCESS
+
+    @classmethod
+    def runAction(cls, ctx: OctopathTaskCtx, action: ACTION) -> CommandReturnCode:
+        command_name = cls.__alternate_names__[0]
+        ret = runActionChain(ctx, [action])
+        if not ret.success:
+            ctx.logger.error(f"{command_name}失败")
+            return CommandReturnCode.FAILED
+        return CommandReturnCode.SUCCESS
+
+    @classmethod
+    def runActionChain(cls, ctx: OctopathTaskCtx, *actions: ACTION) -> CommandReturnCode:
+        action_list = list(chain(*actions))
+        return cls.runActions(ctx, action_list)
 
 
 class ChainedOctopathCommand(BaseOctopathCommand):

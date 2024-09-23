@@ -34,6 +34,9 @@ filterwarnings = [
     "ignore"
 ]
 
+[tool.black]
+line-length = 160
+target-version = ['py38']
+
 [tool.setuptools]
-# ...
 package-dir = {"" = "gameauto"}

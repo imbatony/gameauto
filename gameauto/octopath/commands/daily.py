@@ -5,9 +5,9 @@ from ..constants import IconName, TOWN, getTownByName
 from ...base import Point, CommandReturnCode
 from .move.change_place import ChangeTownCommand
 from ..actions import (
-    EXE_ACTION,
+    ACTION,
     ClickIconAction,
-    EXE_ACTION,
+    ACTION,
     ClickAction,
 )
 from ..ctx import OctopathTaskCtx
@@ -68,23 +68,12 @@ class GetItemsInNamelessTown(ChangeTownCommand):
         无名小镇回收道具
 
         """
-        code = cls.runActions(
+        code = cls.runActionChain(
             ctx,
-            [
-                EXE_ACTION("点击城镇", ClickAction, [pos, 0.5], 0.5),
-                EXE_ACTION(
-                    "点击回收道具",
-                    ClickIconAction,
-                    [IconName.MAPICON_SELECTED_BTN_GET_ITEM],
-                    0.8,
-                ),
-                EXE_ACTION(
-                    "点击是", ClickIconAction, [IconName.DIALOG_GET_ITEM_YES], 3
-                ),
-                EXE_ACTION(
-                    "点击确认", ClickIconAction, [IconName.DIALOG_GET_ITEM_CONFIRM], 1
-                ),
-                EXE_ACTION("点击关闭", ClickIconAction, [IconName.EXIT], 1),
-            ],
+            ACTION("点击城镇", ClickAction, [pos, 0.5], 0.5),
+            ACTION("点击回收道具", ClickIconAction, [IconName.MAPICON_SELECTED_BTN_GET_ITEM], 0.8),
+            ACTION("点击是", ClickIconAction, [IconName.DIALOG_GET_ITEM_YES], 3),
+            ACTION("点击确认", ClickIconAction, [IconName.DIALOG_GET_ITEM_CONFIRM], 1),
+            ACTION("点击关闭", ClickIconAction, [IconName.EXIT], 1),
         )
         return code

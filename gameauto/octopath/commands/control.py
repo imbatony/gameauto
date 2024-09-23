@@ -3,7 +3,7 @@ from .base import BaseOctopathCommand, CommandReturnCode
 from ..ctx import OctopathTaskCtx
 from ..actions import (
     ClickIconAction,
-    EXE_ACTION,
+    ACTION,
     ClickAction,
     ClickCenterIconAction,
     DragLeftRightAction,
@@ -59,22 +59,9 @@ class ClickIconCommand(BaseOctopathCommand):
         is_center = is_center_str.lower() == "true"
 
         if not is_center:
-            code = cls.runActions(
-                ctx,
-                [EXE_ACTION("点击图标", ClickIconAction, [icon_name], wait)],
-            )
+            code = cls.runAction(ctx, ACTION("点击图标", ClickIconAction, [icon_name], wait))
         else:
-            code = cls.runActions(
-                ctx,
-                [
-                    EXE_ACTION(
-                        "点击图标",
-                        ClickCenterIconAction,
-                        [icon_name],
-                        wait,
-                    )
-                ],
-            )
+            code = cls.runAction(ctx, ACTION("点击图标", ClickCenterIconAction, [icon_name], wait))
         return code
 
 
@@ -124,11 +111,7 @@ class ClickPosCommand(BaseOctopathCommand):
             return CommandReturnCode.FAILED
 
         ctx.logger.info("点击坐标 %s, %s", x, y)
-        code = cls.runActions(
-            ctx,
-            [EXE_ACTION("点击坐标", ClickAction, [Point(x, y), 0.4, False], wait)],
-        )
-        return code
+        return cls.runAction(ctx, ACTION("点击坐标", ClickAction, [Point(x, y), 0.4, False], wait))
 
 
 class WalkAroundCommand(BaseOctopathCommand):
@@ -147,12 +130,7 @@ class WalkAroundCommand(BaseOctopathCommand):
         duration = float(duration_str)
         start_time = ctx.get_cur_time()
         while ctx.get_cur_time() - start_time < duration:
-            code = cls.runActions(
-                ctx,
-                [
-                    EXE_ACTION("左右移动", DragLeftRightAction, [1 / 8, 2], 0),
-                ],
-            )
+            code = cls.runAction(ctx, ACTION("左右移动", DragLeftRightAction, [1 / 8, 2], 0))
             if code != CommandReturnCode.SUCCESS:
                 return code
 
