@@ -47,7 +47,7 @@ class BaseOctopathCommand(BaseCommand):
         return status
 
     @classmethod
-    def runActions(cls, ctx: OctopathTaskCtx, actions: list[ACTION]) -> CommandReturnCode:
+    def _runActions(cls, ctx: OctopathTaskCtx, actions: list[ACTION]) -> CommandReturnCode:
         command_name = cls.__alternate_names__[0]
         ret = runActionChain(ctx, actions)
         if not ret.success:
@@ -67,7 +67,7 @@ class BaseOctopathCommand(BaseCommand):
     @classmethod
     def runActionChain(cls, ctx: OctopathTaskCtx, *actions: ACTION) -> CommandReturnCode:
         action_list = list(chain(*actions))
-        return cls.runActions(ctx, action_list)
+        return cls._runActions(ctx, action_list)
 
 
 class ChainedOctopathCommand(BaseOctopathCommand):

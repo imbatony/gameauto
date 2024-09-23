@@ -38,14 +38,12 @@ class EnterHotelAndSleepCommand(BaseOctopathCommand):
                 ACTION("点击进入旅馆", ClickIconAction, [IconName.HOTEL_MINI_MAP, 0.2, False, 0.98], 10),
             )
 
-        code = cls.runActions(
+        code = cls.runActionChain(
             ctx,
-            [
-                ACTION("点击床的图标,触发NPC对话", ClickIconAction, [IconName.BED], 1.5),  # 一般1.5秒内就能找到
-                ACTION("点击跳过对话", ClickAction, [], 2),
-                ACTION("点击是", ClickIconAction, [IconName.DIALOG_YES], 8),  # 一般休息需要等待8秒
-                ACTION("点击确定", ClickIconAction, [IconName.DIALOG_CONFIRM], 1),
-            ],
+            ACTION("点击床的图标,触发NPC对话", ClickIconAction, [IconName.BED], 1.5),  # 一般1.5秒内就能找到
+            ACTION("点击跳过对话", ClickAction, [], 2),
+            ACTION("点击是", ClickIconAction, [IconName.DIALOG_YES], 8),  # 一般休息需要等待8秒
+            ACTION("点击确定", ClickIconAction, [IconName.DIALOG_CONFIRM], 1),
         )
 
         if code != CommandReturnCode.SUCCESS:
