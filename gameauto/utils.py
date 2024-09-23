@@ -9,7 +9,7 @@ def get_logger(name, config) -> Logger:
     if logger.hasHandlers() and hasattr(logger, "initialized"):
         return logger
     logger.propagate = False
-    level = config.get("logging", {}).get("level", "INFO").upper()
+    level = config.get("debug", False) and "DEBUG" or "INFO"
     logger.setLevel(getattr(logging, level))
     consoleHeader = logging.StreamHandler()
     formatter = ColoredFormatter(
@@ -37,14 +37,8 @@ def get_logger(name, config) -> Logger:
         dir = os.path.dirname(file)
         if not os.path.exists(dir):
             os.makedirs(dir)
-        file_handler = TimedRotatingFileHandler(
-            file, when="D", interval=1, backupCount=7, encoding="utf-8"
-        )
-        formatter = logging.Formatter(
-            config.get("logging", {}).get(
-                "format", "%(levelname)8s\t%(asctime)s\t%(filename)-15s\t%(message)s"
-            )
-        )
+        file_handler = TimedRotatingFileHandler(file, when="D", interval=1, backupCount=7, encoding="utf-8")
+        formatter = logging.Formatter(config.get("logging", {}).get("format", "%(levelname)8s\t%(asctime)s\t%(filename)-15s\t%(message)s"))
         file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)
     logger.initialized = True

@@ -1,5 +1,61 @@
 from abc import abstractmethod
+from pathlib import Path
+import time
+from typing import Union, Optional, Generator
 from ..tuples import Box, Point, TxtBox
+from PIL import Image
+from ...ocr import cnocr
+import torch
+import numpy as np
+from ...utils import get_logger
+import pyautogui
+
+
+def ocr_result_to_txt_box(ocr_result_line: dict) -> TxtBox:
+    position = ocr_result_line["position"]
+    text = ocr_result_line["text"]
+    leftTop: list[float, float] = position[0]
+    rightBottom: list[float, float] = position[2]
+    return TxtBox(
+        text=text,
+        left=int(leftTop[0]),
+        top=int(leftTop[1]),
+        width=int(rightBottom[0] - leftTop[0]),
+        height=int(rightBottom[1] - leftTop[1]),
+    )
+
+
+class BaseApp(object):
+    """
+    App基类
+    用于获取应用位置等信息
+    """
+
+    def __init__(self):
+        pass
+
+    @abstractmethod
+    def app_position(self) -> Box:
+        """
+        获取应用位置
+        """
+        pass
+
+    @property
+    def left(self) -> int:
+        return self.app_position().left
+
+    @property
+    def top(self) -> int:
+        return self.app_position().top
+
+    @property
+    def width(self) -> int:
+        return self.app_position().width
+
+    @property
+    def height(self) -> int:
+        return self.app_position().height
 
 
 class BaseGUI(object):
@@ -8,34 +64,14 @@ class BaseGUI(object):
     单元测试时可以使用MockGUI代替
     """
 
-    def __init__(self):
-        pass
+    def __init__(self, config: dict):
+        self.config = config
+        self.logger = get_logger(self.__class__.__name__, config)
 
     @abstractmethod
-    def screenshot(self, filename: str, Box):
+    def screenshot(self, filename: str = None, region: Box = None) -> Image.Image:
         """
         截图
-        """
-        pass
-
-    def screenshot_cv2(self, region: Box):
-        """
-        截图, 返回cv2格式的图片, 用于快速截图识别
-        """
-
-    @abstractmethod
-    def ocr(self, image_path) -> list[TxtBox]:
-        """
-        OCR识别图片
-        """
-        pass
-
-    @abstractmethod
-    def click(
-        self, p: Point, duration: float = 0.2, button: str = "left", tween="linear"
-    ):
-        """
-        点击
         """
         pass
 
@@ -48,16 +84,9 @@ class BaseGUI(object):
         pass
 
     @abstractmethod
-    def locateCenterOnScreen(
-        self,
-        image_path: str,
-        region: Box,
-        confidence=None,
-        grayscale: bool | None = None,
-        center: bool = False,  # 用于在多个位置中选择最靠近中心的位置
-    ) -> Point:
+    def active_app(self, **kwargs) -> BaseApp:
         """
-        识别图片位置
+        激活应用
         """
         pass
 
@@ -75,14 +104,103 @@ class BaseGUI(object):
         """
         pass
 
-    @abstractmethod
-    def locate(needleImage, haystackImage, **kwargs) -> Point:
+    def locateCenterOnScreen(
+        self,
+        needleImage: Union[str, Image.Image, Path],
+        region: Box,
+        screen_image: Union[str, Image.Image, Path] = None,
+        center: bool = False,
+        confidence=None,
+        grayscale: bool | None = None,
+    ) -> Optional[Box]:
         """
-        搜索匹配的图片位置
+        识别图片位置
+        """
+        self.logger.debug(f"识别图片位置")
 
+        if screen_image is None:
+            screen_image = self.screenshot()
+
+        if isinstance(screen_image, Path):
+            screen_image = str(screen_image)
+
+        try:
+            box = None
+            if not center:
+                box = self.locate(needleImage, screen_image, region=region, confidence=confidence, grayscale=grayscale)
+            else:
+                # 找到所有位置
+                pos_generator = self.locateAll(needleImage, screen_image, region=region, confidence=confidence, grayscale=grayscale)
+                # 选择最靠近中心的位置
+                center_pos = Point(region[0] + region[2] / 2, region[1] + region[3] / 2)
+                min_distance = 999999
+                for p in pos_generator:
+                    # 计算距离
+                    distance = (p[0] - center_pos.x) ** 2 + (p[1] - center_pos.y) ** 2
+                    if distance < min_distance:
+                        min_distance = distance
+                        box = p
+            if box is None:
+                self.logger.debug(f"找不到图片")
+                return None
+            else:
+                self.logger.debug(f"找到图片位置: {box}")
+                return box
+        except Exception:
+            self.logger.exception(f"识别图片位置异常")
+            return None
+
+    def locate(self, needleImage: Union[str, Image.Image, Path], haystackImage: Union[str, Image.Image, Path], **kwargs) -> Optional[Box]:
+        """
+        搜索匹配的图片位置, 返回中心点
         Args:
             needleImage: 要搜索的图片
             haystackImage: 被搜索的图片
             **kwargs: 传递给pyautogui.locate函数的参数
         """
-        pass
+        # pyautogui只支持str类型的路径
+        if isinstance(needleImage, Path):
+            needleImage = str(needleImage)
+        if isinstance(haystackImage, Path):
+            haystackImage = str(haystackImage)
+        box = pyautogui.locate(needleImage, haystackImage, **kwargs)
+        if box is None:
+            return None
+        else:
+            return Box(box[0], box[1], box[2], box[3])
+
+    def locateAll(self, needleImage: Union[str, Image.Image, Path], haystackImage: Union[str, Image.Image, Path], **kwargs) -> Generator[Box, None, None]:
+        """
+        搜索匹配的图片位置, 返回矩形框
+        Args:
+            needleImage: 要搜索的图片
+            haystackImage: 被搜索的图片
+            **kwargs: 传递给pyautogui.locate函数的参数
+        """
+        # pyautogui只支持str类型的路径
+        if isinstance(needleImage, Path):
+            needleImage = str(needleImage)
+        if isinstance(haystackImage, Path):
+            haystackImage = str(haystackImage)
+        genertor = pyautogui.locateAll(needleImage, haystackImage, **kwargs)
+        for box in genertor:
+            yield Box(box[0], box[1], box[2], box[3])
+
+    def ocr(
+        self,
+        image_fp: Union[str, Path, Image.Image, torch.Tensor, np.ndarray],
+    ) -> list[TxtBox]:
+        """
+        OCR识别图片
+        """
+        self.logger.debug(f"OCR识别图片")
+        start_time = time.time()
+        result = cnocr.ocr(image_fp)
+        ret = []
+        for idx in range(len(result)):
+            line = result[idx]
+            txt_box = ocr_result_to_txt_box(line)
+            self.logger.debug(f"识别结果{idx}: {txt_box}")
+            ret.append(txt_box)
+        self.logger.debug(f"OCR识别耗时: {time.time() - start_time}")
+        return ret

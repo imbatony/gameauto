@@ -70,15 +70,11 @@ class ScriptOctopathTask(BaseTask):
                     line_index += 1
                 # 如果循环内容为空, 则提示错误
                 if len(loop_content) == 0:
-                    self.ctx.logger.error(
-                        f"自定义脚本解析失败, 循环内容为空, 行号:{loop_start_line_index+1 + self.origin_script_line}"
-                    )
+                    self.ctx.logger.error(f"自定义脚本解析失败, 循环内容为空, 行号:{loop_start_line_index+1 + self.origin_script_line}")
                     return
                 # 如果到达文件末尾, 则提示错误
                 if line_index == len(lines):
-                    self.ctx.logger.error(
-                        f"自定义脚本解析失败, 未找到对应的endloop或者循环结束标识, 行号:{loop_start_line_index+1 + self.origin_script_line}"
-                    )
+                    self.ctx.logger.error(f"自定义脚本解析失败, 未找到对应的endloop或者循环结束标识, 行号:{loop_start_line_index+1 + self.origin_script_line}")
                     return
                 # 执行循环
                 # 将循环内容拼接成一个字符串

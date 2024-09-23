@@ -136,7 +136,7 @@ class ChangeTownCommand(BaseOctopathCommand):
     def click_map_and_zoom_out(cls, ctx: OctopathTaskCtx, world_icon_name: IconName):
         code = cls.runActionChain(
             ctx,
-            ACTION("点击地图菜单", ClickIconAction, [IconName.MAP], 1),
+            ACTION("点击地图菜单", ClickIconAction, [IconName.MAP], 2),
             ACTION("切换世界", ClickIconAction, [world_icon_name], 1),
             ACTION("点击缩小地图", ClickIconAction, [IconName.ZOOM_OUT_MAP], 0),  # 因为下一步需要OCR, 所以不需要等待
         )

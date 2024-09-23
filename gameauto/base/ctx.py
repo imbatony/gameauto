@@ -1,14 +1,10 @@
 import os
+from typing import Optional
 from ..utils import get_logger
-from ..gameconstants import APP_NAME, DEFAULT_APP_X_OFFSET, DEFAULT_APP_Y_OFFSET
+from ..gameconstants import DEFAULT_APP_X_OFFSET, DEFAULT_APP_Y_OFFSET
 from .tuples import TxtBox
-from .gui import BaseGUI, getGUI
+from .gui import BaseGUI, getGUI, BaseApp
 from .tuples import TxtBox, Point, Box
-from pygetwindow import (
-    Window,
-    Win32Window,
-    getWindowsWithTitle,
-)
 
 
 class BaseTaskCtx(object):
@@ -25,7 +21,7 @@ class BaseTaskCtx(object):
     max_ocr_results_len = 10
 
     def __init__(self, config: dict, gui: BaseGUI = None):
-        self.app: Window = None
+        self.app: BaseApp = None
         # 截图
         self.his_screenshots: list[str] = []
         self.cur_screenshot: str | None = None
@@ -36,30 +32,26 @@ class BaseTaskCtx(object):
         self.logger = get_logger(self.__class__.__name__, config)
         self.config = config
         # 偏移量, 用于调整窗口坐标, 排除窗口边框等
-        self.x_offset = int(
-            config.get("game", {}).get("x_offset", DEFAULT_APP_X_OFFSET)
-        )
-        self.y_offset = int(
-            config.get("game", {}).get("y_offset", DEFAULT_APP_Y_OFFSET)
-        )
+        self.x_offset = int(config.get("game", {}).get("x_offset", DEFAULT_APP_X_OFFSET))
+        self.y_offset = int(config.get("game", {}).get("y_offset", DEFAULT_APP_Y_OFFSET))
+
+        # 游戏窗口大小, 如果设置了, 则使用设置实际的大小，而不是app的大小
+        # 用于适配不同分辨率的游戏窗口
+        self.game_width = int(config.get("game", {}).get("width", -1))
+        self.game_height = int(config.get("game", {}).get("height", -1))
+
+        self.logger.debug(f"游戏窗口偏移量: ({self.x_offset}, {self.y_offset})")
+        self.logger.debug(f"游戏窗口大小: ({self.width}, {self.height})")
+
         self.gui = gui or getGUI(config)
+        self.debug = config.get("debug", False)
 
-    def active_app(self) -> bool:
-        appname = self.config.get("game", {}).get("app_name", APP_NAME)
-        self.logger.debug(f"激活应用:{appname}")
-        # TODO: 将这个逻辑移到gui中，不应该在ctx中
-        apps: list[Win32Window] = getWindowsWithTitle(appname)
-        if not apps or len(apps) == 0:
-            self.logger.error(f"未找到应用:{appname}")
-            return False
-
-        if len(apps) > 1:
-            self.logger.warning(f"找到多个应用:{appname}, 取第一个")
-        app = apps[0]
-        self.update_app(app)
-        app.show()
-        app.activate()
-        return True
+    def active_app(self):
+        app = self.gui.active_app()
+        if app is None:
+            raise Exception("激活应用失败")
+        else:
+            self.update_app(app)
 
     @property
     def left(self) -> int:
@@ -75,12 +67,16 @@ class BaseTaskCtx(object):
 
     @property
     def width(self) -> int:
+        if self.game_width > 0:
+            return self.game_width
         if not self.app:
             return 0
         return self.app.width - self.x_offset
 
     @property
     def height(self) -> int:
+        if self.game_height > 0:
+            return self.game_height
         if not self.app:
             return 0
         return self.app.height - self.y_offset
@@ -97,7 +93,12 @@ class BaseTaskCtx(object):
         self.app = app
         return self
 
-    def update_screenshot(self, screenshot, delete_old=True):
+    def update_screenshot(self, screenshot, delete_old=None):
+
+        if delete_old is None:
+            # 默认删除旧截图, 除非是调试模式
+            delete_old = not self.debug
+
         if len(self.his_screenshots) >= self.max_screenshots_len:
             path = self.his_screenshots.pop(0)
             # 删除文件
@@ -132,3 +133,13 @@ class BaseTaskCtx(object):
         self.cur_ocr_result = ocr_result
         self.his_ocr_results.append(ocr_result)
         return self
+
+    def __del__(self):
+        if self.debug:
+            # 测试状态不删除历史截图
+            return
+        self.logger.info("清理历史截图")
+        if self.his_screenshots:
+            for path in self.his_screenshots:
+                if os.path.exists(path):
+                    os.remove(path)

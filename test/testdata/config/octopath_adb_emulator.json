@@ -1,0 +1,20 @@
+{
+    "ocr": {
+        "use_gpu": false,
+        "gpu_id": 0
+    },
+    "game": {
+        "gui": "adb",
+        "width": 1280,
+        "height": 720,
+        "x_offset": 0,
+        "y_offset": 0,
+        "adb": {
+            "host": "127.0.0.1",
+            "port": 5037,
+            "actvity": "com.epicgames.ue4.GameActivity",
+            "package": "com.netease.ma167.bilibili"
+        }
+    },
+    "debug": true
+}

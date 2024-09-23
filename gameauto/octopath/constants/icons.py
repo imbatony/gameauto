@@ -58,19 +58,13 @@ def get_x_ratio(total, index) -> float:
 
 
 icons: dict[IconName, ICON] = {
-    IconName.ZOOM_OUT_MAP: ICON(
-        ASSET("zoom_out.png", "icon"), RELATIVE_POS(1206 / 1280, 647 / 720)
-    ),
+    IconName.ZOOM_OUT_MAP: ICON(ASSET("zoom_out.png", "icon"), RELATIVE_POS(1206 / 1280, 647 / 720)),
     IconName.MENU: ICON(None, RELATIVE_POS(get_x_ratio(10, 0), MENU_BUTTON_Y_RATIO)),
     IconName.TEAM: ICON(None, RELATIVE_POS(get_x_ratio(10, 1), MENU_BUTTON_Y_RATIO)),
     IconName.EXPLORE: ICON(None, RELATIVE_POS(get_x_ratio(10, 2), MENU_BUTTON_Y_RATIO)),
     IconName.TOWER: ICON(None, RELATIVE_POS(get_x_ratio(10, 3), MENU_BUTTON_Y_RATIO)),
-    IconName.GAME_BOARD: ICON(
-        None, RELATIVE_POS(get_x_ratio(10, 4), MENU_BUTTON_Y_RATIO)
-    ),
-    IconName.MEMORY_BOOK: ICON(
-        None, RELATIVE_POS(get_x_ratio(10, 5), MENU_BUTTON_Y_RATIO)
-    ),
+    IconName.GAME_BOARD: ICON(None, RELATIVE_POS(get_x_ratio(10, 4), MENU_BUTTON_Y_RATIO)),
+    IconName.MEMORY_BOOK: ICON(None, RELATIVE_POS(get_x_ratio(10, 5), MENU_BUTTON_Y_RATIO)),
     IconName.MAP: ICON(None, RELATIVE_POS(get_x_ratio(10, 6), MENU_BUTTON_Y_RATIO)),
     IconName.SHOP: ICON(None, RELATIVE_POS(get_x_ratio(10, 7), MENU_BUTTON_Y_RATIO)),
     IconName.GUIDE: ICON(None, RELATIVE_POS(get_x_ratio(10, 8), MENU_BUTTON_Y_RATIO)),
@@ -87,8 +81,8 @@ icons: dict[IconName, ICON] = {
     IconName.DIALOG_GET_ITEM_NO: ICON(None, rpFrom720P(480, 600)),
     IconName.DIALOG_GET_ITEM_CONFIRM: ICON(None, rpFrom720P(640, 530)),
     IconName.MINI_MAP: ICON(None, rpFrom720P(1000, 100)),
-    IconName.WORLD_NORMAL: ICON(None, rpFrom720P(90, 160)),
-    IconName.WORLD_HELL: ICON(None, rpFrom720P(90, 260)),
+    IconName.WORLD_NORMAL: ICON(None, rpFrom720P(180, 160)),
+    IconName.WORLD_HELL: ICON(None, rpFrom720P(180, 260)),
     IconName.HOTEL_MINI_MAP: ICON(ASSET("hotel_mini_map.png", "icon"), None),
     IconName.BED: ICON(ASSET("bed.png", "icon"), None),
     IconName.HOTEL: ICON(ASSET("hotel.png", "icon"), None),

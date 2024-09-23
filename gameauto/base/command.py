@@ -32,9 +32,9 @@ class BaseCommand:
 
     @classmethod
     def get_app_screen_shot(cls, ctx: BaseTaskCtx) -> str:
-        ctx.logger.debug(f"截取app窗口的屏幕截图")
         path = os.path.join(os.environ.get("TEMP"), f"{int(time.time())}.png")
         ctx.gui.screenshot(path, region=ctx.region)
+        ctx.logger.debug(f"截取app窗口的屏幕截图,区域范围为{ctx.region}, 保存到:{path}")
         ctx.cur_screenshot = path
         return path
 
