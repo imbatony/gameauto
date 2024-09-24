@@ -82,9 +82,7 @@ pg.screenshot("test.png", region=(0, 0, 100, 100))
 
 
 # 定位功能, 返回图片在屏幕上的位置, (left, top, width, height) , confidence为匹配度, 用于匹配图片的相似度, 如果没有找到返回None
-pos = pg.locateOnScreen(
-    "test.png", confidence=0.9, grayscale=True, region=(0, 0, 100, 100)
-)
+pos = pg.locateOnScreen("test.png", confidence=0.9, grayscale=True, region=(0, 0, 100, 100))
 print(pos.left, pos.top, pos.width, pos.height)
 
 # 找到图片的中心位置
@@ -92,14 +90,10 @@ center = pg.center(pos)
 print(center.x, center.y)
 
 # 直接找到图片的中心位置
-pos = pg.locateCenterOnScreen(
-    "test.png", confidence=0.9, grayscale=True, region=(0, 0, 100, 100)
-)
+pos = pg.locateCenterOnScreen("test.png", confidence=0.9, grayscale=True, region=(0, 0, 100, 100))
 
 # 多个图片位置
-poses = pg.locateAllOnScreen(
-    "test.png", confidence=0.9, grayscale=True, region=(0, 0, 100, 100)
-)
+poses = pg.locateAllOnScreen("test.png", confidence=0.9, grayscale=True, region=(0, 0, 100, 100))
 for pos in poses:
     print(pos.left, pos.top, pos.width, pos.height)
 
