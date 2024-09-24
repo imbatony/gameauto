@@ -22,3 +22,6 @@ def getGUI(config: dict) -> BaseGUI:
         return ADBGUI(config)
     else:
         raise ValueError(f"不支持的GUI类型:{gui_type}")
+
+
+__all__ = ["getGUI", "BaseGUI", "BaseApp"]

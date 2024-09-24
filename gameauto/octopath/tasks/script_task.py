@@ -21,15 +21,15 @@ class ScriptOctopathTask(BaseTask):
 
     def run(self) -> None:
         if not self.is_sub_task:
-            self.ctx.logger.debug(f"开始执行自定义脚本")
+            self.ctx.logger.debug("开始执行自定义脚本")
         else:
-            self.ctx.logger.debug(f"开始执行子任务脚本")
+            self.ctx.logger.debug("开始执行子任务脚本")
 
         try:
             if not self.is_sub_task:
                 self.ctx.active_app()
         except Exception:
-            self.ctx.logger.exception(f"激活应用失败")
+            self.ctx.logger.exception("激活应用失败")
             return
 
         lines = self.script.split("\n")

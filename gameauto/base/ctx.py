@@ -4,7 +4,7 @@ from ..utils import get_logger
 from ..gameconstants import DEFAULT_APP_X_OFFSET, DEFAULT_APP_Y_OFFSET
 from .tuples import TxtBox
 from .gui import BaseGUI, getGUI, BaseApp
-from .tuples import TxtBox, Point, Box
+from .tuples import Point, Box
 
 
 class BaseTaskCtx(object):
@@ -20,7 +20,7 @@ class BaseTaskCtx(object):
     # 最大历史ocr结果记录长度
     max_ocr_results_len = 10
 
-    def __init__(self, config: dict, gui: BaseGUI = None):
+    def __init__(self, config: dict, gui: Optional[BaseGUI] = None):
         self.app: BaseApp = None
         # 截图
         self.his_screenshots: list[str] = []
@@ -135,7 +135,7 @@ class BaseTaskCtx(object):
         return self
 
     def __del__(self):
-        if self.debug:
+        if hasattr(self, "debug") and self.debug:
             # 测试状态不删除历史截图
             return
         self.logger.info("清理历史截图")

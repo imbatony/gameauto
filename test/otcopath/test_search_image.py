@@ -4,18 +4,14 @@ import os
 import sys
 import unittest
 from pathlib import Path
-from unittest.mock import MagicMock
 import pyautogui as pg
 import time
+import pytest
 
-sys.path.insert(
-    0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-)
+sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 SRC_DIR = Path(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-TEST_DATA_DIR = Path(
-    os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "testdata"
-)
+TEST_DATA_DIR = Path(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "testdata")
 ENERMY_IMAGE_DIR = Path(SRC_DIR, "gameauto", "octopath", "assets", "images", "enemy")
 sys.path.append(str(TEST_DATA_DIR))
 importlib.invalidate_caches()
@@ -35,28 +31,19 @@ class TestSearchImage(unittest.TestCase):
 
     def test_locate(self):
         image_path = getIconPath(EnemyName.FallenCait)
-        image_path_2 = Path(
-            TEST_DATA_DIR, "image", "octopath", "combating_cait.png"
-        ).__str__()
+        image_path_2 = Path(TEST_DATA_DIR, "image", "octopath", "combating_cait.png").__str__()
         start_time = time.time()
-        pos = pg.locate(
-            needleImage=image_path, haystackImage=image_path_2, confidence=0.9
-        )
+        pos = pg.locate(needleImage=image_path, haystackImage=image_path_2, confidence=0.9)
         self.ctx.logger.info(f"耗时: {time.time() - start_time}")
         self.assertIsNotNone(pos)
 
+    @pytest.mark.skip(reason="This is a performance test")
     def test_locate_performace(self):
         image_path = getIconPath(EnemyName.FallenCait)
-        image_path_2 = Path(
-            TEST_DATA_DIR, "image", "octopath", "combating_cait.png"
-        ).__str__()
+        image_path_2 = Path(TEST_DATA_DIR, "image", "octopath", "combating_cait.png").__str__()
         start_time = time.time()
         for i in range(100):
-            pos = pg.locate(
-                needleImage=image_path, haystackImage=image_path_2, confidence=0.9
-            )
+            pos = pg.locate(needleImage=image_path, haystackImage=image_path_2, confidence=0.9)
         end_time = time.time()
-        self.ctx.logger.info(
-            f"耗时: {end_time - start_time}, 平均耗时: {(end_time - start_time) / 100}"
-        )
+        self.ctx.logger.info(f"耗时: {end_time - start_time}, 平均耗时: {(end_time - start_time) / 100}")
         self.assertIsNotNone(pos)

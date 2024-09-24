@@ -1,6 +1,5 @@
 from abc import abstractmethod
 import collections
-import pyautogui as pyautogui
 from ...base import BaseAction, ActionRet, ActionRetStatus
 from ..ctx import OctopathTaskCtx
 import time

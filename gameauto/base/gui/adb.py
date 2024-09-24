@@ -31,9 +31,16 @@ class ADBGUI(BaseGUI):
         adb_serial = adb_config.get("serial", DEFAULT_ANDROID_SERIAL)
         self.adb_package = adb_config.get("package", ANDRIOD_GAME_PACKAGE_NAME)
         self.package_activity = adb_config.get("activity", ANDRIOD_GAME_ACTIVITY_NAME)
+        self.device_addr = adb_config.get("device_addr", None)
+
         try:
             # Set socket timeout to 10 (default None)
             self.adb = adb = adbutils.AdbClient(host=adb_host, port=adb_port, socket_timeout=10)
+
+            if self.device_addr:
+                self.logger.info(f"连接ADB设备: {self.device_addr}")
+                result = adb.connect(self.device_addr, 10)
+                self.logger.info(f"连接ADB设备结果: {result}")
 
             if adb_serial:
                 self.device = adb.device(serial=adb_serial)

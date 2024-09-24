@@ -16,9 +16,7 @@ town_names: dict[str, TOWN] = {
     "格兰波特": TOWN("格兰波特", World.NORMAL, True, "格兰波特", None),
     "无名小镇": TOWN("无名小镇", World.NORMAL, True, "无名小镇", None),
     "克拉古斯比亚": TOWN("克拉古斯比亚", World.NORMAL, True, "克拉古斯比亚", None),
-    "边狱-克拉古斯比亚": TOWN(
-        "边狱-克拉古斯比亚", World.HELL, True, "克拉古斯比亚", None
-    ),
+    "边狱-克拉古斯比亚": TOWN("边狱-克拉古斯比亚", World.HELL, True, "克拉古斯比亚", None),
 }
 
 
@@ -26,6 +24,12 @@ def getWorldIconNameByTown(town: TOWN) -> IconName:
     if town.world == World.NORMAL:
         return IconName.WORLD_NORMAL
     return IconName.WORLD_HELL
+
+
+def getWorldNameByTown(town: TOWN) -> str:
+    if town.world == World.NORMAL:
+        return "现世"
+    return "边狱"
 
 
 def getTownByName(name: str) -> TOWN:

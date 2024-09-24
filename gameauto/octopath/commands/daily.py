@@ -5,7 +5,6 @@ from ..constants import IconName, TOWN, getTownByName
 from ...base import Point, CommandReturnCode
 from .move.change_place import ChangeTownCommand
 from ..actions import (
-    ACTION,
     ClickIconAction,
     ACTION,
     ClickAction,

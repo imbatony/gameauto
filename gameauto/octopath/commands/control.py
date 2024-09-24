@@ -8,7 +8,7 @@ from ..actions import (
     ClickCenterIconAction,
     DragLeftRightAction,
 )
-from ..constants import IconName, getIconNameByName
+from ..constants import getIconNameByName
 from ...base.tuples import Point
 
 

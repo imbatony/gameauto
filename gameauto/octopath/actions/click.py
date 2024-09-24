@@ -1,4 +1,3 @@
-from time import sleep
 from .base import BaseOctAction, ActionRunError
 from ...base import Point
 from ..ctx import OctopathTaskCtx

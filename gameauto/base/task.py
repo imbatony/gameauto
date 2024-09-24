@@ -1,6 +1,3 @@
-from ..utils import get_logger
-
-
 class BaseTask(object):
 
     @staticmethod

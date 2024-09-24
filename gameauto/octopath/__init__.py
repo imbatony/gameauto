@@ -2,7 +2,7 @@ from ..base import GameAutoBase
 import importlib
 
 # 提前导入所有的任务模块
-from .tasks import *
+from .tasks import ScriptOctopathTask
 
 
 class OctoPathGameAuto(GameAutoBase):
@@ -25,7 +25,7 @@ class OctoPathGameAuto(GameAutoBase):
             action_class = getattr(module, task)
             action_instance = action_class()
             action_instance.run()
-        except ModuleNotFoundError as e:
+        except ModuleNotFoundError:
             print(f"不存在的游戏自动化任务: {task}")
 
     def support_task(self, task):
@@ -33,17 +33,14 @@ class OctoPathGameAuto(GameAutoBase):
         try:
             importlib.import_module("gameauto.octopath.tasks." + task)
             return True
-        except ModuleNotFoundError as e:
+        except ModuleNotFoundError:
             return False
 
     def get_real_task_name(self, task):
         return self.name_mapping.get(task, task)
 
     def get_task_list(self):
-        return [
-            (task, self.description_mapping.get(task, task))
-            for task in self.name_mapping
-        ]
+        return [(task, self.description_mapping.get(task, task)) for task in self.name_mapping]
 
     def run_script(self, script_content: str):
         ScriptOctopathTask(self.config, script_content).run()

@@ -40,7 +40,7 @@ class BaseCommand:
 
     @classmethod
     def renew_status(cls, ctx: BaseTaskCtx, ocr=True) -> int:
-        ctx.logger.debug(f"刷新当前状态")
+        ctx.logger.debug("刷新当前状态")
         path = cls.get_app_screen_shot(ctx)
         ctx.logger.debug(f"截图保存到:{path}")
         ctx.update_screenshot(path)

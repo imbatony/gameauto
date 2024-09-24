@@ -126,9 +126,9 @@ class ChangeTownCommand(BaseOctopathCommand):
     def click_city_pos(cls, ctx: OctopathTaskCtx, pos: Point):
         code = cls.runActionChain(
             ctx,
-            ACTION("点击城镇", ClickAction, [pos, 0.5], 2),
-            ACTION("点击前往这里", ClickIconAction, [IconName.MAPICON_SELECTED_BTN_GOTO], 0.8),
-            ACTION("点击确认", ClickIconAction, [IconName.DIALOG_YES], 10),
+            ACTION("点击城镇", ClickAction, [pos, 0.5], 3),
+            ACTION("点击前往这里", ClickIconAction, [IconName.MAPICON_SELECTED_BTN_GOTO], 1),
+            ACTION("点击确认", ClickIconAction, [IconName.DIALOG_YES], 8),
         )
         return code
 
@@ -136,8 +136,8 @@ class ChangeTownCommand(BaseOctopathCommand):
     def click_map_and_zoom_out(cls, ctx: OctopathTaskCtx, world_icon_name: IconName):
         code = cls.runActionChain(
             ctx,
-            ACTION("点击地图菜单", ClickIconAction, [IconName.MAP], 2),
-            ACTION("切换世界", ClickIconAction, [world_icon_name], 1),
+            ACTION("点击地图菜单", ClickIconAction, [IconName.MAP], 3),
+            ACTION("切换", ClickIconAction, [world_icon_name], 2),
             ACTION("点击缩小地图", ClickIconAction, [IconName.ZOOM_OUT_MAP], 0),  # 因为下一步需要OCR, 所以不需要等待
         )
         return code
@@ -203,7 +203,7 @@ class ChangeToWildCommand(BaseOctopathCommand):
             changeWoldAction,
             ACTION("点击野外图标", ClickCenterIconAction, [wild.icon_name], 1),  # 点击野外图标
             ACTION("点击前往这里", ClickIconAction, [IconName.MAPICON_SELECTED_BTN_GOTO], 0.8),
-            ACTION("点击确认", ClickIconAction, [IconName.DIALOG_YES], 8),
+            ACTION("点击确认前往城市，等待地图加载8秒", ClickIconAction, [IconName.DIALOG_YES], 8),
         )
         if code != CommandReturnCode.SUCCESS:
             ctx.logger.error("切换野外失败")

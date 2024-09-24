@@ -1,4 +1,4 @@
-from ...constants import IconName, getAssetPath, getIconByIconName, ICON
+from ...constants import IconName, getAssetPath, getIconByIconName
 from ..base import (
     BaseOctopathCommand,
     CommandReturnCode,
@@ -6,7 +6,7 @@ from ..base import (
 
 from ...ctx import OctopathTaskCtx
 from ...actions import ClickIconAction, ACTION, ClickAction
-from ....base import Point, Box
+from ....base import Box
 
 
 class EnterHotelAndSleepCommand(BaseOctopathCommand):

@@ -1,5 +1,4 @@
 import pyautogui as pg
-import time
 
 # 获取屏幕分辨率
 x, y = pg.size()

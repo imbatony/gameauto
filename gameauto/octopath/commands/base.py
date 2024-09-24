@@ -3,7 +3,6 @@ from ...base import BaseCommand, BaseTaskCtx, TxtBox, CommandReturnCode
 from ..status import OctopathStatus
 from ..actions import ACTION, runActionChain
 from ..ctx import OctopathTaskCtx
-from itertools import chain
 
 
 class BaseOctopathCommand(BaseCommand):
@@ -26,7 +25,7 @@ class BaseOctopathCommand(BaseCommand):
         status = OctopathStatus.Unknown.value
         ocr_result: list[TxtBox] = ocr_result or ctx.cur_ocr_result
         for pos in ocr_result:
-            if "菜单" in pos.text or "商店" in pos.text or "地图" in pos.text or "追忆" in pos.text or "游戏":
+            if "菜单" in pos.text or "商店" in pos.text or "地图" in pos.text:
                 ctx.logger.debug(f"主菜单: {pos.text}")
                 status |= OctopathStatus.Menu.value | OctopathStatus.Free.value
             if "其他" in pos.text or "道具" in pos.text or "通知" in pos.text:
