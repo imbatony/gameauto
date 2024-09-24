@@ -25,7 +25,7 @@ class TestSearchImage(unittest.TestCase):
     def __init__(self, methodName: str = ...) -> None:
         super().__init__(methodName)
         config_path = Path(TEST_DATA_DIR, "config", "octopath.json")
-        config = json.load(open(config_path))
+        config = json.load(open(config_path, encoding="utf-8"))
         self.gui = getGUI(config)
         self.ctx = OctopathTaskCtx(config)
 

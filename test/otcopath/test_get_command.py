@@ -18,7 +18,7 @@ class TestGetCommnad(unittest.TestCase):
     def __init__(self, methodName: str = ...) -> None:
         super().__init__(methodName)
         config_path = Path(TEST_DATA_DIR, "config", "octopath.json")
-        self.config = json.load(open(config_path))
+        self.config = json.load(open(config_path, encoding="utf-8"))
         self.ctx = OctopathTaskCtx(self.config)
 
     def test_get_command(self, mock=None):
