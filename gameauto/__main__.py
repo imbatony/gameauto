@@ -16,15 +16,9 @@ from gameauto import GameAuto
 def main():
     # 解析命令
     parser = argparse.ArgumentParser(prog="GameAuto")
-    parser.add_argument(
-        "--game", type=str, default="octopath", help="游戏名称,如octopath"
-    )
-    parser.add_argument(
-        "task", type=str, help="内建任务名称或者自定义脚本,如farming 或者 myscript.txt"
-    )
-    parser.add_argument(
-        "--config", default=None, help="JSON配置文件路径,默认为gameauto.json"
-    )
+    parser.add_argument("--game", type=str, default="octopath", help="游戏名称,如octopath")
+    parser.add_argument("task", type=str, help="内建任务名称或者自定义脚本,如farming 或者 myscript.txt")
+    parser.add_argument("--config", default=None, help="JSON配置文件路径,默认为gameauto.json")
     args = parser.parse_args()
 
     game = args.game
@@ -47,17 +41,13 @@ def main():
     config = args.config
     try:
         gameauto = GameAuto(game, config)
-    except ModuleNotFoundError as e:
+    except ModuleNotFoundError:
         print("初始化GameAuto失败,请检查游戏名称是否正确")
         return
 
     if not custom_script and not gameauto.support_task(task):
         print(f"游戏{game}不支持内建任务:{task}")
         return
-    from .ocr import dummy
-
-    # 初始化OCR, 避免第一次调用OCR耗时过长
-    dummy()
     try:
         if not custom_script:
             print(f"开始执行任务{task}")
@@ -81,7 +71,6 @@ def main():
             print(f"任务{task}执行中断,耗时{end_time - start_time:.2f}秒")
         else:
             print(f"自定义脚本 {task}执行中断,耗时{end_time - start_time:.2f}秒")
-        exit(0)
 
 
 if __name__ == "__main__":

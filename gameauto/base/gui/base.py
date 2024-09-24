@@ -116,7 +116,7 @@ class BaseGUI(object):
         """
         识别图片位置
         """
-        self.logger.debug(f"识别图片位置")
+        self.logger.debug("识别图片位置")
 
         if screen_image is None:
             screen_image = self.screenshot()
@@ -141,13 +141,13 @@ class BaseGUI(object):
                         min_distance = distance
                         box = p
             if box is None:
-                self.logger.debug(f"找不到图片")
+                self.logger.debug("找不到图片")
                 return None
             else:
                 self.logger.debug(f"找到图片位置: {box}")
                 return box
         except Exception:
-            self.logger.exception(f"识别图片位置异常")
+            self.logger.exception("识别图片位置异常")
             return None
 
     def locate(self, needleImage: Union[str, Image.Image, Path], haystackImage: Union[str, Image.Image, Path], **kwargs) -> Optional[Box]:
@@ -193,7 +193,7 @@ class BaseGUI(object):
         """
         OCR识别图片
         """
-        self.logger.debug(f"OCR识别图片")
+        self.logger.debug("OCR识别图片")
         start_time = time.time()
         result = cnocr.ocr(image_fp)
         ret = []

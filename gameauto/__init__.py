@@ -33,10 +33,10 @@ class GameAuto(object):
                     if line.startswith("#"):
                         continue
                     content += line
-        except UnicodeDecodeError as e:
+        except UnicodeDecodeError:
             self.logger.error(f"读取脚本文件失败,请将文件保存为UTF-8格式: {script}")
             return
-        except Exception as e:
+        except Exception:
             self.logger.error(f"读取脚本文件失败: {script}")
             return
 
