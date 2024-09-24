@@ -100,7 +100,7 @@ class ClickCenterIconAction(BaseOctAction):
         icon_name: IconName,
         duration: float = 0.1,
         grayscale=True,
-        confidence=0.75,
+        confidence=0.8,
     ):
         """
         点击最靠近屏幕中心的图标
