@@ -16,7 +16,7 @@ ENERMY_IMAGE_DIR = Path(SRC_DIR, "gameauto", "octopath", "assets", "images", "en
 sys.path.append(str(TEST_DATA_DIR))
 importlib.invalidate_caches()
 
-from gameauto.base.gui import getGUI, BaseGUI
+from gameauto.base.gui import getGUI
 from gameauto.octopath.constants.enemy import EnemyName, getIconPath
 from gameauto.octopath.ctx import OctopathTaskCtx
 

@@ -47,33 +47,6 @@ class BaseCommand:
         if ocr:
             ocr_result = cls.ocr(ctx, path)
             ctx.update_ocr_result(ocr_result)
-        status = cls.detect_status(ctx)
+        status = ctx.detect_status()
         ctx.update_status(status)
         return ctx.cur_status
-
-    @classmethod
-    @abstractmethod
-    def detect_status(cls, ctx: BaseTaskCtx, ocr_result: list[TxtBox] = None) -> int:
-        """
-        检测当前状态
-        需要根据当前状态的特征，比如界面元素，文本等，判断当前状态
-        状态值由具体的游戏决定
-        """
-        raise NotImplementedError
-
-    @classmethod
-    def ocr(cls, ctx: BaseTaskCtx, image_path) -> list[TxtBox]:
-        list = ctx.gui.ocr(image_path)
-        list_with_offset = []
-        for idx in range(len(list)):
-            line = list[idx]
-            # 需要增加实际的应用的偏移量
-            line_with_offset = TxtBox(
-                text=line.text,
-                left=line.left + ctx.left,
-                top=line.top + ctx.top,
-                width=line.width,
-                height=line.height,
-            )
-            list_with_offset.append(line_with_offset)
-        return list_with_offset

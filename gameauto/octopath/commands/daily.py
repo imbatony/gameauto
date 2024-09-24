@@ -41,7 +41,7 @@ class GetItemsInNamelessTown(ChangeTownCommand):
         ctx.logger.debug("获取当前屏幕截图")
         path = cls.get_app_screen_shot(ctx)
         # 识别地图
-        ocr_result = cls.ocr(ctx, path)
+        ocr_result = ctx.ocr(path)
         # 如果城市位置在当前屏幕上,则直接点击
         code = cls.click_town_if_in_screen(ctx, town)
         if code == CommandReturnCode.SUCCESS:

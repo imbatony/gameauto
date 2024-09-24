@@ -1,5 +1,5 @@
 from enum import Enum
-from .assets import ASSET, RELATIVE_POS, ICON, rpFrom720P
+from .assets import ASSET, RELATIVE_POS, ICON, rpFrom720P, getAssetPath
 
 
 class IconName(Enum):
@@ -107,3 +107,8 @@ def getIconNameByName(name: str) -> IconName:
         if v.name == name:
             return k
     return None
+
+
+def getIconPathByIconName(name: IconName) -> str:
+    icon = getIconByIconName(name)
+    return getAssetPath(icon.asset)

@@ -64,7 +64,7 @@ class ChangeTownCommand(BaseOctopathCommand):
         ctx.logger.debug("获取当前屏幕截图")
         path = cls.get_app_screen_shot(ctx)
         # 识别地图
-        ocr_result = cls.ocr(ctx, path)
+        ocr_result = ctx.ocr(path)
         # 如果城市位置在当前屏幕上,则直接点击
         code = cls.click_town_if_in_screen(ctx, town)
         if code == CommandReturnCode.SUCCESS:
@@ -87,7 +87,7 @@ class ChangeTownCommand(BaseOctopathCommand):
     @classmethod
     def click_town_if_in_screen(cls, ctx: OctopathTaskCtx, town: TOWN):
         path = cls.get_app_screen_shot(ctx)
-        ocr_result = cls.ocr(ctx, path)
+        ocr_result = ctx.ocr(path)
         for pos in ocr_result:
             if town.keyword in pos.text:
                 city_icon_pos = Point(pos.center.x, pos.center.y - (30 / 720) * ctx.height)

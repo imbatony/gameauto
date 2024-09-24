@@ -1,3 +1,4 @@
+from abc import abstractmethod
 import os
 from typing import Optional
 from ..utils import get_logger
@@ -134,6 +135,10 @@ class BaseTaskCtx(object):
         self.his_ocr_results.append(ocr_result)
         return self
 
+    @abstractmethod
+    def detect_status(self, ocr_result: list[TxtBox] = None) -> int:
+        pass
+
     def __del__(self):
         if hasattr(self, "debug") and self.debug:
             # 测试状态不删除历史截图
@@ -143,3 +148,19 @@ class BaseTaskCtx(object):
             for path in self.his_screenshots:
                 if os.path.exists(path):
                     os.remove(path)
+
+    def ocr(self, image_path) -> list[TxtBox]:
+        list = self.gui.ocr(image_path)
+        list_with_offset = []
+        for idx in range(len(list)):
+            line = list[idx]
+            # 需要增加实际的应用的偏移量
+            line_with_offset = TxtBox(
+                text=line.text,
+                left=line.left + self.left,
+                top=line.top + self.top,
+                width=line.width,
+                height=line.height,
+            )
+            list_with_offset.append(line_with_offset)
+        return list_with_offset

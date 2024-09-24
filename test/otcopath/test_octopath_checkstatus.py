@@ -27,8 +27,8 @@ class TestOctopathCheckStatus(unittest.TestCase):
 
     def test_check_status(self, mock=None):
         image_path = Path(TEST_DATA_DIR, "image", "octopath", "main.png")
-        ret = self.cmd.ocr(self.ctx, image_path)
-        status = self.cmd.detect_status(self.ctx, ret)
+        ret = self.ctx.ocr(image_path)
+        status = self.ctx.detect_status(ret)
         self.assertTrue(OctopathStatus.is_menu(status))
         self.assertTrue(OctopathStatus.is_free(status))
         self.assertFalse(OctopathStatus.is_combat(status))
@@ -43,32 +43,32 @@ class TestOctopathCheckStatus(unittest.TestCase):
 
     def test_check_status_720p(self):
         image_path = Path(TEST_DATA_DIR, "image", "octopath", "main_720p.png")
-        ret = self.cmd.ocr(self.ctx, image_path)
-        status = self.cmd.detect_status(self.ctx, ret)
+        ret = self.ctx.ocr(image_path)
+        status = self.ctx.detect_status(ret)
         self.assertTrue(OctopathStatus.is_menu(status))
         self.assertTrue(OctopathStatus.is_free(status))
         self.assertFalse(OctopathStatus.is_combat(status))
 
     def test_check_combat(self):
         image_path = Path(TEST_DATA_DIR, "image", "octopath", "combat.png")
-        ret = self.cmd.ocr(self.ctx, image_path)
-        status = self.cmd.detect_status(self.ctx, ret)
+        ret = self.ctx.ocr(image_path)
+        status = self.ctx.detect_status(ret)
         self.assertTrue(OctopathStatus.is_combat(status))
         self.assertFalse(OctopathStatus.is_menu(status))
         self.assertTrue(OctopathStatus.is_free(status))
 
     def test_check_combating(self):
         image_path = Path(TEST_DATA_DIR, "image", "octopath", "combating.png")
-        ret = self.cmd.ocr(self.ctx, image_path)
-        status = self.cmd.detect_status(self.ctx, ret)
+        ret = self.ctx.ocr(image_path)
+        status = self.ctx.detect_status(ret)
         self.assertTrue(OctopathStatus.is_combat(status))
         self.assertFalse(OctopathStatus.is_menu(status))
         self.assertFalse(OctopathStatus.is_free(status))
 
     def test_check_end_of_combat(self):
         image_path = Path(TEST_DATA_DIR, "image", "octopath", "end_of_combat.png")
-        ret = self.cmd.ocr(self.ctx, image_path)
-        status = self.cmd.detect_status(self.ctx, ret)
+        ret = self.ctx.ocr(image_path)
+        status = self.ctx.detect_status(ret)
         self.assertTrue(OctopathStatus.is_free(status))
         self.assertTrue(OctopathStatus.is_combat(status))
         self.assertFalse(OctopathStatus.is_menu(status))

@@ -1,4 +1,5 @@
 from time import sleep
+import time
 from .base import BaseOctopathCommand, CommandReturnCode
 from ..ctx import OctopathTaskCtx
 from ..actions import (
@@ -61,7 +62,10 @@ class ClickIconCommand(BaseOctopathCommand):
         if not is_center:
             code = cls.runAction(ctx, ACTION("点击图标", ClickIconAction, [icon_name], wait))
         else:
-            code = cls.runAction(ctx, ACTION("点击图标", ClickCenterIconAction, [icon_name], wait))
+            code = cls.runAction(
+                ctx,
+                ACTION("点击图标", ClickCenterIconAction, [icon_name], wait),
+            )
         return code
 
 
@@ -111,7 +115,10 @@ class ClickPosCommand(BaseOctopathCommand):
             return CommandReturnCode.FAILED
 
         ctx.logger.info("点击坐标 %s, %s", x, y)
-        return cls.runAction(ctx, ACTION("点击坐标", ClickAction, [Point(x, y), 0.4, False], wait))
+        return cls.runAction(
+            ctx,
+            ACTION("点击坐标", ClickAction, [Point(x, y), 0.4, False], wait),
+        )
 
 
 class WalkAroundCommand(BaseOctopathCommand):
@@ -128,10 +135,47 @@ class WalkAroundCommand(BaseOctopathCommand):
 
         ctx.logger.info("原地走动")
         duration = float(duration_str)
-        start_time = ctx.get_cur_time()
-        while ctx.get_cur_time() - start_time < duration:
+        start_time = ctx.getCurTime()
+        while ctx.getCurTime() - start_time < duration:
             code = cls.runAction(ctx, ACTION("左右移动", DragLeftRightAction, [1 / 8, 2], 0))
             if code != CommandReturnCode.SUCCESS:
                 return code
 
         return CommandReturnCode.SUCCESS
+
+
+class WaitUnilIconFoundCommand(BaseOctopathCommand):
+    __alternate_names__ = ["等待直到图标出现", "WaitUnilIconFound"]
+
+    @classmethod
+    def run(
+        cls,
+        ctx: OctopathTaskCtx,
+        icon_name_str: str,
+        max_wait_str: str = "1",
+        wait_interval_str: str = "0.5",
+    ) -> CommandReturnCode:
+        """
+        等待图标出现
+
+        :param icon_name: 图标名称
+        :param max_wait_str: 最大等待时间
+
+        :return: 执行结果
+        """
+        ctx.logger.info("等待图标 %s 出现", icon_name_str)
+        icon_name = getIconNameByName(icon_name_str)
+        if icon_name is None:
+            ctx.logger.error(f"未找到图标: {icon_name_str}")
+            return CommandReturnCode.FAILED
+
+        wait = float(max_wait_str)
+        wait_interval = float(wait_interval_str)
+        start = ctx.getCurTime()
+        while ctx.getCurTime() - start < wait:
+            if ctx.findIconInScreen(icon_name):
+                return CommandReturnCode.SUCCESS
+            sleep(wait_interval)
+
+        ctx.logger.error(f"等待图标 {icon_name_str} 超时")
+        return CommandReturnCode.FAILED
