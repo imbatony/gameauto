@@ -5,5 +5,8 @@
         "x_offset": 0,
         "y_offset": 0
     },
-    "debug": true
+    "debug": true,
+    "logging": {
+        "file": "log/octopath.log"
+    }
 }

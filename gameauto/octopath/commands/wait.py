@@ -83,7 +83,7 @@ class WalkAroundWaitBattleCommnad(BaseOctopathCommand):
             """
             start = ctx.getCurTime()
             while ctx.getCurTime() - start < max_wait:
-                code = cls.runAction(ctx, ACTION("左右移动", DragLeftRightAction, [1 / 8, 1]))
+                code = cls.runAction(ctx, ACTION("左右移动", DragLeftRightAction, [1 / 8, 2]))
                 if code != CommandReturnCode.SUCCESS:
                     return False
                 try:
@@ -130,4 +130,16 @@ class WaitBattleEndCommand(BaseOctopathCommand):
 
         :return: 执行结果
         """
+        ctx.logger.info("等待战斗结束")
+        wait = float(max_wait_str)
+        wait_interval = float(wait_interval_str)
+
+        start = ctx.getCurTime()
+        while ctx.getCurTime() - start < wait:
+            if not ctx.isInCombat(renew=True):
+                ctx.logger.info("战斗结束,点击退出战斗")
+                code = cls.runActionChain(ctx, ACTION("点击退出战斗", ClickAction, [], 0.5), ACTION("点击退出战斗", ClickAction, []))
+                return code
+            sleep(wait_interval)
+
         return CommandReturnCode.FAILED

@@ -120,3 +120,4 @@ class ADBGUI(BaseGUI):
             self.device.swipe(left.x, left.y, start.x, start.y, single_duration)
             self.device.swipe(start.x, start.y, right.x, right.y, single_duration)
             self.device.swipe(right.x, right.y, start.x, start.y, single_duration)
+            # self.device.click(start.x, start.y)
