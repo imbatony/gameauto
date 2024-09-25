@@ -48,6 +48,9 @@ class IconName(Enum):
 
     MAP_WILD_GORGE_HELL = "野外-峡谷-边狱"
 
+    # traits
+    TRAITS_IN_BATTLE = "特征-战斗"
+
 
 TOP_BUTTON_Y_RATIO = 20 / 720
 MENU_BUTTON_Y_RATIO = 625 / 720
@@ -86,6 +89,7 @@ icons: dict[IconName, ICON] = {
     IconName.HOTEL_MINI_MAP: ICON(ASSET("hotel_mini_map.png", "icon"), None),
     IconName.BED: ICON(ASSET("bed.png", "icon"), None),
     IconName.HOTEL: ICON(ASSET("hotel.png", "icon"), None),
+    # map
     IconName.MAP_WILD_GORGE: ICON(ASSET("wild_gorge.png", "map"), None),
     IconName.MAP_WILD_PALACE: ICON(ASSET("wild_palace.png", "map"), None),
     IconName.MAP_WILD_CAVE: ICON(ASSET("wild_cave.png", "map"), None),
@@ -93,6 +97,8 @@ icons: dict[IconName, ICON] = {
     IconName.MAP_WILD_SITE: ICON(ASSET("wild_site.png", "map"), None),
     IconName.MAP_WILD_RUINS: ICON(ASSET("wild_ruins.png", "map"), None),
     IconName.MAP_WILD_GORGE_HELL: ICON(ASSET("wild_gorge_hell.png", "map"), None),
+    # traits
+    IconName.TRAITS_IN_BATTLE: ICON(ASSET("battle.png", "traits"), None),
 }
 
 

@@ -1,8 +1,4 @@
 {
-    "ocr": {
-        "use_gpu": false,
-        "gpu_id": 0
-    },
     "game": {
         "gui": "adb",
         "width": 1280,

@@ -12,23 +12,6 @@ from ..constants import getIconNameByName
 from ...base.tuples import Point
 
 
-class WaitCommand(BaseOctopathCommand):
-    __alternate_names__ = ["等待", "Wait"]
-
-    @classmethod
-    def run(cls, ctx: OctopathTaskCtx, seconds_str: str) -> CommandReturnCode:
-        """
-        等待, 单位: 秒 用于添加等待时间
-
-        :param seconds: 等待时间
-        :return: 执行结果
-        """
-        seconds = int(seconds_str)
-        ctx.logger.info("等待 %d 秒", seconds)
-        sleep(seconds)
-        return CommandReturnCode.SUCCESS
-
-
 class ClickIconCommand(BaseOctopathCommand):
     __alternate_names__ = ["点击图标", "ClickIcon"]
 
@@ -61,10 +44,7 @@ class ClickIconCommand(BaseOctopathCommand):
         if not is_center:
             code = cls.runAction(ctx, ACTION("点击图标", ClickIconAction, [icon_name], wait))
         else:
-            code = cls.runAction(
-                ctx,
-                ACTION("点击图标", ClickCenterIconAction, [icon_name], wait),
-            )
+            code = cls.runAction(ctx, ACTION("点击图标", ClickCenterIconAction, [icon_name], wait))
         return code
 
 
@@ -141,40 +121,3 @@ class WalkAroundCommand(BaseOctopathCommand):
                 return code
 
         return CommandReturnCode.SUCCESS
-
-
-class WaitUnilIconFoundCommand(BaseOctopathCommand):
-    __alternate_names__ = ["等待直到图标出现", "WaitUnilIconFound"]
-
-    @classmethod
-    def run(
-        cls,
-        ctx: OctopathTaskCtx,
-        icon_name_str: str,
-        max_wait_str: str = "1",
-        wait_interval_str: str = "0.5",
-    ) -> CommandReturnCode:
-        """
-        等待图标出现
-
-        :param icon_name: 图标名称
-        :param max_wait_str: 最大等待时间
-
-        :return: 执行结果
-        """
-        ctx.logger.info("等待图标 %s 出现", icon_name_str)
-        icon_name = getIconNameByName(icon_name_str)
-        if icon_name is None:
-            ctx.logger.error(f"未找到图标: {icon_name_str}")
-            return CommandReturnCode.FAILED
-
-        wait = float(max_wait_str)
-        wait_interval = float(wait_interval_str)
-        start = ctx.getCurTime()
-        while ctx.getCurTime() - start < wait:
-            if ctx.findIconInScreen(icon_name):
-                return CommandReturnCode.SUCCESS
-            sleep(wait_interval)
-
-        ctx.logger.error(f"等待图标 {icon_name_str} 超时")
-        return CommandReturnCode.FAILED

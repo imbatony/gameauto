@@ -1,24 +1,20 @@
 from enum import Enum
-from ...base import Box, Point, RGB, RGBPoint
-from .assets import DETACTABLE, rbFrom720P, ASSET
+from .assets import rbFrom720P, ASSET, DETACTABLE, RELATIVE_POS
 
 
 class ENEMY(DETACTABLE):
-    pass
+    __slots__ = ()
+
+    def __new__(cls, name, icon_asset: ASSET, detectable_box: RELATIVE_POS = None):
+        detectable_box = rbFrom720P(60, 300, 450, 250) if detectable_box is None else detectable_box
+        return super().__new__(cls, name, icon_asset, detectable_box)
 
 
 class EnemyName(Enum):
     FallenCait = "亡者凯特琳"
 
 
-Enemies = {
-    EnemyName.FallenCait: ENEMY(
-        "亡者凯特琳",
-        ASSET("fallen_cait.png", "enemy"),
-        rbFrom720P(60, 300, 450, 250),
-        None,
-    )
-}
+Enemies = {EnemyName.FallenCait: ENEMY("亡者凯特琳", ASSET("fallen_cait.png", "enemy"))}
 
 
 def getEnemy(name: EnemyName) -> ENEMY:

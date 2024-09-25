@@ -1,5 +1,5 @@
 from .towns import getTownByName, TOWN, getWorldIconNameByTown
-from .assets import getAssetPath, ASSET, RELATIVE_POS
+from .assets import getAssetPath, ASSET, RELATIVE_POS, DETACTABLE
 from .icons import getIconByIconName, ICON, IconName, getIconNameByName, getIconPathByIconName
 from .wild import WILD, getNearByTownByWild, getWildByName
 
@@ -19,4 +19,5 @@ __all__ = [
     "getNearByTownByWild",
     "getWildByName",
     "getIconPathByIconName",
+    "DETACTABLE",
 ]

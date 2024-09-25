@@ -1,7 +1,8 @@
-import collections
+from abc import ABCMeta, abstractmethod
 import os
 from pathlib import Path
-from ...base.tuples import Box, Point, RGB, RGBPoint
+from ...base.tuples import Box, Point, RGB
+from typing import NamedTuple
 
 
 ASSET_DIR = Path(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "assets")
@@ -9,7 +10,14 @@ IMAGE_DIR = Path(ASSET_DIR, "images")
 MAP_IMAGE_DIR = Path(IMAGE_DIR, "maps")
 ICON_IMAGE_DIR = Path(IMAGE_DIR, "icons")
 
-ASSET = collections.namedtuple("ASSET", ["name", "type"])
+
+class ASSET(NamedTuple):
+    name: str
+    type: str
+
+    @property
+    def path(self):
+        return getAssetPath(self)
 
 
 def getAssetPath(asset: ASSET) -> str:
@@ -19,16 +27,24 @@ def getAssetPath(asset: ASSET) -> str:
         return str(Path(ICON_IMAGE_DIR, asset.name))
     elif asset.type == "enemy":
         return str(Path(IMAGE_DIR, "enemy", asset.name))
+    elif asset.type == "traits":
+        return str(Path(IMAGE_DIR, "traits", asset.name))
 
     return None
 
 
-ASSET.path = property(lambda self: getAssetPath(self))
+class RELATIVE_POS(NamedTuple):
+    x_ratio: float
+    y_ratio: float
 
 
-RELATIVE_POS = collections.namedtuple("RELATIVE_POS", ["x_ratio", "y_ratio"])
+class ICON(NamedTuple):
+    asset: ASSET
+    relative_pos: RELATIVE_POS
 
-ICON = collections.namedtuple("ICON", ["asset", "relative_pos"])
+    @property
+    def path(self):
+        return getAssetPath(self.asset)
 
 
 def rpFrom720P(x: int, y: int) -> RELATIVE_POS:
@@ -36,9 +52,13 @@ def rpFrom720P(x: int, y: int) -> RELATIVE_POS:
 
 
 # 保存了截图中的矩形区域，以及原始截图的宽高, 可以用来在不同分辨率下计算对应的矩形区域
-RelBox = collections.namedtuple(
-    "RelBox", "left top width height original_width original_height"
-)
+class RelBox(NamedTuple):
+    left: int
+    top: int
+    width: int
+    height: int
+    original_width: int
+    original_height: int
 
 
 def rbFrom720P(left: int, top: int, width: int, height: int) -> RelBox:
@@ -55,13 +75,16 @@ def toAbsBox(rel_box: RelBox, width: int, height: int) -> Box:
     )
 
 
-RGBRelPoint = collections.namedtuple("RGBPoint", "rgb relPoint")
+class RGBRelPoint(NamedTuple):
+    rgb: RGB
+    relPoint: RELATIVE_POS
 
 
 def rgbPointFrom720P(rgb: RGB, point: Point) -> RGBRelPoint:
     return RGBRelPoint(rgb, RELATIVE_POS(point.x / 1280, point.y / 720))
 
 
-DETACTABLE = collections.namedtuple(
-    "DETACTABLE", ["name", "icon_asset", "detect_rel_box", "rgbRelPoint"]
-)
+class DETACTABLE(NamedTuple):
+    name: str
+    icon_asset: ASSET
+    detect_box: RelBox

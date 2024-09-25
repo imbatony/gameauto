@@ -1,4 +1,5 @@
 from abc import abstractmethod
+import os
 from pathlib import Path
 import time
 from typing import Union, Optional, Generator
@@ -9,6 +10,7 @@ import torch
 import numpy as np
 from ...utils import get_logger
 import pyautogui
+import cv2
 
 
 def ocr_result_to_txt_box(ocr_result_line: dict) -> TxtBox:
@@ -159,15 +161,35 @@ class BaseGUI(object):
             **kwargs: 传递给pyautogui.locate函数的参数
         """
         # pyautogui只支持str类型的路径
-        if isinstance(needleImage, Path):
-            needleImage = str(needleImage)
-        if isinstance(haystackImage, Path):
-            haystackImage = str(haystackImage)
+        needleImage = self._preprocess_images(needleImage)
+        haystackImage = self._preprocess_images(haystackImage)
         box = pyautogui.locate(needleImage, haystackImage, **kwargs)
         if box is None:
             return None
         else:
             return Box(box[0], box[1], box[2], box[3])
+
+    @classmethod
+    def _preprocess_images(cls, img: Union[str, Path, Image.Image, np.ndarray]) -> np.ndarray:
+        """
+
+        Args:
+            img ():
+
+        Returns:
+            BGR format ndarray: [H, W, 3]
+
+        """
+        if isinstance(img, (str, Path)):
+            if not os.path.isfile(img):
+                raise FileNotFoundError(img)
+            return cv2.imread(img, cv2.IMREAD_COLOR)
+        elif isinstance(img, Image.Image):
+            img = np.asarray(img.convert("RGB"), dtype="float32")
+        if isinstance(img, np.ndarray):
+            return cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+        else:
+            raise TypeError("type %s is not supported now" % str(type(img)))
 
     def locateAll(self, needleImage: Union[str, Image.Image, Path], haystackImage: Union[str, Image.Image, Path], **kwargs) -> Generator[Box, None, None]:
         """

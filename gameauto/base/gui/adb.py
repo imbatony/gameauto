@@ -38,7 +38,7 @@ class ADBGUI(BaseGUI):
             self.adb = adb = adbutils.AdbClient(host=adb_host, port=adb_port, socket_timeout=10)
 
             if self.device_addr:
-                self.logger.info(f"连接ADB设备: {self.device_addr}")
+                self.logger.info(f"尝试连接ADB设备: {self.device_addr}")
                 result = adb.connect(self.device_addr, 10)
                 self.logger.info(f"连接ADB设备结果: {result}")
 
@@ -97,7 +97,10 @@ class ADBGUI(BaseGUI):
         点击屏幕
         """
         self.logger.debug(f"点击坐标: {p}")
-        self.device.swipe(p.x, p.y, p.x, p.y, duration)
+        if duration > 0:
+            self.device.swipe(p.x, p.y, p.x, p.y, duration)
+        else:
+            self.device.click(p.x, p.y)
 
     def dragLeftRight(
         self,

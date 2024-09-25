@@ -8,8 +8,8 @@ from .force import ForceExitToMenuCommand
 from .move import ChangeTownCommand, ForceChangeTownCommand, ChangeToWildCommand, MoveViaMiniMapCommand, EnterHotelAndSleepCommand
 from .daily import GetItemsInNamelessTown
 from .test import TestCommand
-from .control import WaitCommand, ClickIconCommand, ClickPosCommand, WalkAroundCommand
-
+from .wait import WaitCommand, WaitUntilIconFoundCommand
+from .click import ClickIconCommand, ClickPosCommand, WalkAroundCommand
 
 command_name_type_cahce: dict[str, type[BaseOctopathCommand]] = {}
 
@@ -55,4 +55,5 @@ __all__ = [
     "ClickIconCommand",
     "ClickPosCommand",
     "WalkAroundCommand",
+    "WaitUntilIconFoundCommand",
 ]

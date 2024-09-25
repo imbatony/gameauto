@@ -27,7 +27,7 @@ class BaseTaskCtx(object):
         self.his_screenshots: list[str] = []
         self.cur_screenshot: str | None = None
         self.his_status: list[int] = []
-        self.cur_status = -1
+        self.cur_status = 0
         self.cur_ocr_result: list[TxtBox] = []
         self.his_ocr_results: list[list[TxtBox]] = []
         self.logger = get_logger(self.__class__.__name__, config)
