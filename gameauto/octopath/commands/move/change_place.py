@@ -44,7 +44,7 @@ class ChangeTownCommand(BaseOctopathCommand):
             ctx.logger.info("当前已经在目标城镇")
             return CommandReturnCode.SUCCESS
 
-        status = cls.renew_status(ctx)
+        status = ctx.renew_status()
         if not OctopathStatus.is_menu(status):
             ctx.logger.error("当前不在主菜单, 请先返回主菜单")
             return CommandReturnCode.FAILED
@@ -62,9 +62,9 @@ class ChangeTownCommand(BaseOctopathCommand):
         sleep(1)
         # 获取当前屏幕截图
         ctx.logger.debug("获取当前屏幕截图")
-        path = cls.get_app_screen_shot(ctx)
+        image = ctx.gui.screenshot()
         # 识别地图
-        ocr_result = ctx.ocr(path)
+        ocr_result = ctx.ocr(image)
         # 如果城市位置在当前屏幕上,则直接点击
         code = cls.click_town_if_in_screen(ctx, town)
         if code == CommandReturnCode.SUCCESS:
@@ -86,8 +86,8 @@ class ChangeTownCommand(BaseOctopathCommand):
 
     @classmethod
     def click_town_if_in_screen(cls, ctx: OctopathTaskCtx, town: TOWN):
-        path = cls.get_app_screen_shot(ctx)
-        ocr_result = ctx.ocr(path)
+        image = ctx.gui.screenshot()
+        ocr_result = ctx.ocr(image)
         for pos in ocr_result:
             if town.keyword in pos.text:
                 city_icon_pos = Point(pos.center.x, pos.center.y - (30 / 720) * ctx.height)

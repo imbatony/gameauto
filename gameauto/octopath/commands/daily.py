@@ -24,7 +24,7 @@ class GetItemsInNamelessTown(ChangeTownCommand):
         :return: 执行结果
         """
         town: TOWN = getTownByName("无名小镇")
-        status = cls.renew_status(ctx)
+        status = ctx.renew_status()
         if not OctopathStatus.is_menu(status):
             ctx.logger.error("当前不在主菜单, 请先返回主菜单")
             return CommandReturnCode.FAILED
@@ -39,9 +39,9 @@ class GetItemsInNamelessTown(ChangeTownCommand):
         sleep(1)
         # 获取当前屏幕截图
         ctx.logger.debug("获取当前屏幕截图")
-        path = cls.get_app_screen_shot(ctx)
+        image = ctx.gui.screenshot()
         # 识别地图
-        ocr_result = ctx.ocr(path)
+        ocr_result = ctx.ocr(image)
         # 如果城市位置在当前屏幕上,则直接点击
         code = cls.click_town_if_in_screen(ctx, town)
         if code == CommandReturnCode.SUCCESS:

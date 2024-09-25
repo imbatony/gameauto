@@ -1,9 +1,6 @@
 from abc import abstractmethod
 from enum import Enum
-import os
-import time
 from .ctx import BaseTaskCtx
-from .tuples import TxtBox
 
 
 class CommandReturnCode(Enum):
@@ -29,24 +26,3 @@ class BaseCommand:
     @abstractmethod
     def run(cls, ctx: BaseTaskCtx, *args: str) -> CommandReturnCode:
         raise NotImplementedError
-
-    @classmethod
-    def get_app_screen_shot(cls, ctx: BaseTaskCtx) -> str:
-        path = os.path.join(os.environ.get("TEMP"), f"{int(time.time())}.png")
-        ctx.gui.screenshot(path, region=ctx.region)
-        ctx.logger.debug(f"截取app窗口的屏幕截图,区域范围为{ctx.region}, 保存到:{path}")
-        ctx.cur_screenshot = path
-        return path
-
-    @classmethod
-    def renew_status(cls, ctx: BaseTaskCtx, ocr=True) -> int:
-        ctx.logger.debug("刷新当前状态")
-        path = cls.get_app_screen_shot(ctx)
-        ctx.logger.debug(f"截图保存到:{path}")
-        ctx.update_screenshot(path)
-        if ocr:
-            ocr_result = cls.ocr(ctx, path)
-            ctx.update_ocr_result(ocr_result)
-        status = ctx.detect_status()
-        ctx.update_status(status)
-        return ctx.cur_status

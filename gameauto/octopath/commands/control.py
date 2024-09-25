@@ -1,5 +1,4 @@
 from time import sleep
-import time
 from .base import BaseOctopathCommand, CommandReturnCode
 from ..ctx import OctopathTaskCtx
 from ..actions import (

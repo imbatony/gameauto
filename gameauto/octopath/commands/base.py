@@ -1,6 +1,5 @@
 from abc import abstractmethod
-from ...base import BaseCommand, BaseTaskCtx, TxtBox, CommandReturnCode
-from ..status import OctopathStatus
+from ...base import BaseCommand, BaseTaskCtx, CommandReturnCode
 from ..actions import ACTION, runActionChain
 from ..ctx import OctopathTaskCtx
 

@@ -3,9 +3,13 @@ from ..base import BaseTaskCtx
 from ..gameconstants import DEFAULT_ACTION_DELAY
 from .constants import TOWN, WILD, IconName, getIconPathByIconName
 from PIL import Image
-from typing import Union, Optional, Generator
+from typing import Union, Optional
 from ..base.tuples import TxtBox
 from .status import OctopathStatus
+import torch
+import numpy as np
+import os
+from pathlib import Path
 
 
 class OctopathTaskCtx(BaseTaskCtx):
@@ -23,6 +27,8 @@ class OctopathTaskCtx(BaseTaskCtx):
 
     def findIconInScreen(self, icon_name: IconName, screenshot: Optional[Image.Image] = None, **kargs) -> bool:
         image = getIconPathByIconName(icon_name)
+        if image is None:
+            return False
         if screenshot is None:
             screenshot = self.gui.screenshot()
             try:
@@ -55,3 +61,32 @@ class OctopathTaskCtx(BaseTaskCtx):
                 status |= OctopathStatus.Free.value
 
         return status
+
+    def ocr(self, image: Union[str, Path, Image.Image, torch.Tensor, np.ndarray]) -> list[TxtBox]:
+        list = self.gui.ocr(image)
+        list_with_offset = []
+        for idx in range(len(list)):
+            line = list[idx]
+            # 需要增加实际的应用的偏移量
+            line_with_offset = TxtBox(
+                text=line.text,
+                left=line.left + self.left,
+                top=line.top + self.top,
+                width=line.width,
+                height=line.height,
+            )
+            list_with_offset.append(line_with_offset)
+        return list_with_offset
+
+    def renew_status(self, ocr=True) -> int:
+        path = os.path.join(os.environ.get("TEMP"), f"{int(time.time())}.png")
+        self.gui.screenshot(path, region=self.region)
+        self.logger.debug(f"截取app窗口的屏幕截图,区域范围为{self.region}, 保存到:{path}")
+        self.update_screenshot(path)
+        self.logger.debug("刷新当前状态")
+        if ocr:
+            ocr_result = self.ocr(path)
+            self.update_ocr_result(ocr_result)
+        status = self.detect_status()
+        self.update_status(status)
+        return self.cur_status
