@@ -5,12 +5,11 @@ import time
 from typing import Union, Optional, Generator
 from ..tuples import Box, Point, TxtBox
 from PIL import Image
-from ...ocr import cnocr
-import torch
 import numpy as np
 from ...utils import get_logger
 import pyautogui
 import cv2
+from pyautogui import ImageNotFoundException
 
 
 def ocr_result_to_txt_box(ocr_result_line: dict) -> TxtBox:
@@ -86,6 +85,13 @@ class BaseGUI(object):
         pass
 
     @abstractmethod
+    def drag(self, start: Point, end: Point, duration: float = 0.8):
+        """
+        拖拽
+        """
+        pass
+
+    @abstractmethod
     def active_app(self, **kwargs) -> BaseApp:
         """
         激活应用
@@ -106,52 +112,6 @@ class BaseGUI(object):
         """
         pass
 
-    def locateCenterOnScreen(
-        self,
-        needleImage: Union[str, Image.Image, Path],
-        region: Box,
-        screen_image: Union[str, Image.Image, Path] = None,
-        center: bool = False,
-        confidence=None,
-        grayscale: bool | None = None,
-    ) -> Optional[Box]:
-        """
-        识别图片位置
-        """
-        self.logger.debug("识别图片位置")
-
-        if screen_image is None:
-            screen_image = self.screenshot()
-
-        if isinstance(screen_image, Path):
-            screen_image = str(screen_image)
-
-        try:
-            box = None
-            if not center:
-                box = self.locate(needleImage, screen_image, region=region, confidence=confidence, grayscale=grayscale)
-            else:
-                # 找到所有位置
-                pos_generator = self.locateAll(needleImage, screen_image, region=region, confidence=confidence, grayscale=grayscale)
-                # 选择最靠近中心的位置
-                center_pos = Point(region[0] + region[2] / 2, region[1] + region[3] / 2)
-                min_distance = 999999
-                for p in pos_generator:
-                    # 计算距离
-                    distance = (p[0] - center_pos.x) ** 2 + (p[1] - center_pos.y) ** 2
-                    if distance < min_distance:
-                        min_distance = distance
-                        box = p
-            if box is None:
-                self.logger.debug("找不到图片")
-                return None
-            else:
-                self.logger.debug(f"找到图片位置: {box}")
-                return box
-        except Exception:
-            self.logger.exception("识别图片位置异常")
-            return None
-
     def locate(self, needleImage: Union[str, Image.Image, Path], haystackImage: Union[str, Image.Image, Path], **kwargs) -> Optional[Box]:
         """
         搜索匹配的图片位置, 返回中心点
@@ -160,10 +120,16 @@ class BaseGUI(object):
             haystackImage: 被搜索的图片
             **kwargs: 传递给pyautogui.locate函数的参数
         """
+        if needleImage is None or haystackImage is None:
+            self.logger.debug("图片为空")
+            return None
         # pyautogui只支持str类型的路径
         needleImage = self._preprocess_images(needleImage)
         haystackImage = self._preprocess_images(haystackImage)
-        box = pyautogui.locate(needleImage, haystackImage, **kwargs)
+        try:
+            box = pyautogui.locate(needleImage, haystackImage, **kwargs)
+        except ImageNotFoundException as e:
+            return None
         if box is None:
             return None
         else:
@@ -204,19 +170,28 @@ class BaseGUI(object):
             needleImage = str(needleImage)
         if isinstance(haystackImage, Path):
             haystackImage = str(haystackImage)
-        genertor = pyautogui.locateAll(needleImage, haystackImage, **kwargs)
-        for box in genertor:
-            yield Box(box[0], box[1], box[2], box[3])
+        self.logger.debug(f"搜索图片位置: {needleImage} in {haystackImage}")
+        try:
+            genertor = pyautogui.locateAll(needleImage, haystackImage, **kwargs)
+            if genertor is None:
+                yield None
+                return None
+            for box in genertor:
+                yield Box(box[0], box[1], box[2], box[3])
+        except ImageNotFoundException as e:
+            yield None
 
     def ocr(
         self,
-        image_fp: Union[str, Path, Image.Image, torch.Tensor, np.ndarray],
+        image_fp: Union[str, Path, Image.Image, np.ndarray],
     ) -> list[TxtBox]:
         """
         OCR识别图片
         """
         self.logger.debug("OCR识别图片")
         start_time = time.time()
+        from ...ocr import cnocr
+
         result = cnocr.ocr(image_fp)
         ret = []
         for idx in range(len(result)):

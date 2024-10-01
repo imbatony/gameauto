@@ -5,7 +5,7 @@ from time import sleep
 from .base import BaseOctopathCommand, CommandReturnCode
 from ..ctx import OctopathTaskCtx
 from ..constants import getIconNameByName, getIconPathByIconName, IconName
-from ..actions import DragLeftRightAction, ACTION, ClickAction
+from ..actions import DragLeftRightAction, ACTION, ClickAction, ClickIconAction
 from ..status import OctopathStatus
 
 
@@ -50,7 +50,7 @@ class WaitUntilIconFoundCommand(BaseOctopathCommand):
         start = ctx.getCurTime()
         image = getIconPathByIconName(icon_name)
         while ctx.getCurTime() - start < wait:
-            if ctx.findImageInScreen(image):
+            if ctx.findImageInScreen(image) is not None:
                 return CommandReturnCode.SUCCESS
             sleep(wait_interval)
 
@@ -116,6 +116,55 @@ class WalkAroundWaitBattleCommnad(BaseOctopathCommand):
         thread1.join()
 
         return CommandReturnCode.SUCCESS if ctx.isInCombat() else CommandReturnCode.FAILED
+
+
+class LongClickWaitEnterBattleCommand(BaseOctopathCommand):
+    __alternate_names__ = ["长按等待进入战斗", "LongClickWaitEnterBattle"]
+
+    @classmethod
+    def run(cls, ctx: OctopathTaskCtx, max_wait_str: str = "12", wait_interval_str: str = "0.5") -> CommandReturnCode:
+        """
+        长按等待进入战斗
+
+        :param max_wait_str: 最大等待时间
+
+        :return: 执行结果
+        """
+        ctx.logger.info("长按等待进入战斗")
+        wait = float(max_wait_str)
+        wait_interval = float(wait_interval_str)
+        cls.runAction(ctx, ACTION("长按进入战斗", ClickAction, [None, 5]))
+
+        start = ctx.getCurTime()
+        while ctx.getCurTime() - start < wait:
+            if ctx.isInCombat(renew=True):
+                ctx.logger.info("进入战斗")
+                return CommandReturnCode.SUCCESS
+            sleep(wait_interval)
+
+        return CommandReturnCode.FAILED
+
+
+class LongClickAndExitFightCommand(BaseOctopathCommand):
+    __alternate_names__ = ["长按退出竞技场", "LongClickAndExitFight"]
+
+    @classmethod
+    def run(cls, ctx: OctopathTaskCtx) -> CommandReturnCode:
+        """
+        长按退出竞技场
+
+        :param max_wait_str: 最大等待时间
+
+        :return: 执行结果
+        """
+        ctx.logger.info("长按退出竞技场")
+        # 需要增加战斗异常时强制退出的逻辑
+        return cls.runActionChain(
+            ctx,
+            ACTION("长按退出竞技场", ClickAction, [None, 5], 4),
+            ACTION("点击退出竞技场", ClickIconAction, [IconName.ARENA_EXIT_CONFIRM], 2),
+            ACTION("点击退出竞技场", ClickIconAction, [IconName.ARENA_EXIT_CLOSE], 4),
+        )
 
 
 class WaitBattleEndCommand(BaseOctopathCommand):

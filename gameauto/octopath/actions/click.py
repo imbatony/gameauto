@@ -1,13 +1,7 @@
 from .base import BaseOctAction, ActionRunError
 from ...base import Point
 from ..ctx import OctopathTaskCtx
-from ..constants import (
-    ICON,
-    getIconByIconName,
-    IconName,
-    getAssetPath,
-    RELATIVE_POS,
-)
+from ..constants import ICON, getIconByIconName, IconName, getAssetPath, RELATIVE_POS, rpFrom720P
 
 
 def _toAbsoluteForRelPos(pos: RELATIVE_POS, ctx: OctopathTaskCtx) -> Point:
@@ -38,7 +32,7 @@ class ClickAction(BaseOctAction):
         cls,
         ctx: OctopathTaskCtx,
         pos: Point = None,
-        duration: float = 0.4,
+        duration: float = 0.2,
         is_absolute=True,  # 是否是绝对坐标
     ):
         if pos is None:
@@ -57,7 +51,7 @@ class ClickIconAction(BaseOctAction):
         cls,
         ctx: OctopathTaskCtx,
         icon_name: IconName,
-        duration: float = 0.1,
+        duration: float = 0.2,
         grayscale=True,
         confidence=0.8,
         center=False,
@@ -75,7 +69,7 @@ class ClickIconAction(BaseOctAction):
         # 如果没有相对位置, 通过图片定位找到图标位置,然后点击
         pic_path = getAssetPath(icon.asset)
         pos = None
-        box = ctx.gui.locateCenterOnScreen(
+        box = ctx.locateCenterOnScreen(
             pic_path,
             confidence=confidence,
             grayscale=grayscale,
@@ -84,7 +78,7 @@ class ClickIconAction(BaseOctAction):
         )
 
         if box is None:
-            raise ActionRunError(f"找不到图标{icon_name.value}")
+            raise ActionRunError(f"找不到图标:{icon_name.value}")
         else:
             pos = box.center
         ctx.gui.touch(pos)
@@ -97,7 +91,7 @@ class ClickCenterIconAction(BaseOctAction):
         cls,
         ctx: OctopathTaskCtx,
         icon_name: IconName,
-        duration: float = 0.1,
+        duration: float = 0.2,
         grayscale=True,
         confidence=0.8,
     ):
@@ -112,6 +106,48 @@ class ClickCenterIconAction(BaseOctAction):
             confidence=confidence,
             center=True,
         )
+
+
+class ChangeSkillAction(BaseOctAction):
+    @classmethod
+    def run_impl(
+        cls,
+        ctx: OctopathTaskCtx,
+        skill_pos: RELATIVE_POS,
+        round: int,
+        duration: float = 0.4,
+    ):
+        """
+        切换技能
+        """
+        pos = _toAbsoluteForRelPos(skill_pos, ctx)
+        if skill_pos == 0:
+            # 如果是0, 说明是大招, 点击对应位置即可
+            ctx.gui.touch(pos, duration=duration)
+        else:
+            # 如果不是0, 说明是普通技能, 需要拖动, 拖动的偏移由round决定
+            # 从技能位置开始, 拖动到技能位置+round
+            start_pos = pos
+            skill_round_offset: RELATIVE_POS = rpFrom720P(87 * round, 0)
+            end_pos = _toAbsoluteForRelPos(RELATIVE_POS(skill_pos.x_ratio + skill_round_offset.x_ratio, skill_pos.y_ratio), ctx)
+            ctx.gui.drag(start_pos, end_pos, duration=duration)
+        return None
+
+
+class ClickExchangeAction(BaseOctAction):
+    @classmethod
+    def run_impl(
+        cls,
+        ctx: OctopathTaskCtx,
+        num: int,
+        duration: float = 0.4,
+    ):
+        """
+        点击交换技能
+        """
+        ClickIconAction.run_impl(ctx, IconName.EXCHANGE, duration=duration)
+        ctx.toggle_battle_exchange(num)
+        return None
 
 
 class DragLeftRightAction(BaseOctAction):

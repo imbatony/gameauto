@@ -5,7 +5,7 @@ from ..base import (
 )
 
 from ...ctx import OctopathTaskCtx
-from ...actions import ClickIconAction, ACTION, ClickAction
+from ...actions import ClickIconAction, ACTION, ClickAction, KACTION
 from ....base import Box
 
 
@@ -20,12 +20,9 @@ class EnterHotelAndSleepCommand(BaseOctopathCommand):
         :return: 执行结果
         """
         ctx.logger.info("进入旅馆")
+        box: Box | None = ctx.findImageInScreen(IconName.HOTEL, confidence=0.8, grayscale=True, region=ctx.region)
 
-        icon_hotel = getIconByIconName(IconName.HOTEL)
-        icon_hotel_path = getAssetPath(icon_hotel.asset)
-        box: Box = ctx.gui.locateCenterOnScreen(icon_hotel_path, confidence=0.8, grayscale=True, region=ctx.region)
-
-        if box:
+        if box is not None:
             # 如果当前能找到旅馆图标, 则直接点击进入, 一般3秒内就能找到,这时无法通过小地图进入，因为图标会被遮挡
             ctx.logger.debug("找到旅馆图标, 直接点击进入")
             code = cls.runAction(ctx, ACTION("点击旅馆", ClickAction, [box.center], 3))
@@ -41,7 +38,7 @@ class EnterHotelAndSleepCommand(BaseOctopathCommand):
 
         code = cls.runActionChain(
             ctx,
-            ACTION("点击床的图标,触发NPC对话", ClickIconAction, [IconName.BED, 0.2, True, 0.7], 1.5),  # 一般1.5秒内就能找到
+            ACTION("点击床的图标,触发NPC对话", ClickIconAction, [IconName.BED, 0.2], 1.5),  # 一般1.5秒内就能找到
             ACTION("点击跳过对话", ClickAction, [], 1),
             ACTION("点击跳过对话", ClickAction, [], 2),
             ACTION("点击是", ClickIconAction, [IconName.DIALOG_YES], 6),  # 一般休息需要等待6秒

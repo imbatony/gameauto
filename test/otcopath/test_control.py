@@ -28,5 +28,5 @@ class TestControlCommnad(unittest.TestCase):
         self.assertIsNotNone(cmdType)
         self.assertEqual(cmdType, WaitUntilIconFoundCommand)
         screen_shot = Path(TEST_DATA_DIR, "image", "octopath", "combating.png")
-        find = self.ctx.findImageInScreen(IconName.TRAITS_IN_BATTLE, screen_shot)
-        self.assertTrue(find)
+        box = self.ctx.findImageInScreen(IconName.TRAITS_IN_BATTLE, screen_shot)
+        self.assertIsNotNone(box)

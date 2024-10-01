@@ -11,6 +11,7 @@ class OctopathStatus(Enum):
     Gameboard = 1 << 5  # 游戏棋盘中
     Conclusion = 1 << 6  # 结算中，可以点击退出
     Conclusion2 = 1 << 7  # 结算中,需要长按退出
+    CanAttack = 1 << 8  # 可以攻击
 
     def is_free(int) -> bool:
         return int & OctopathStatus.Free.value == OctopathStatus.Free.value
@@ -34,9 +35,10 @@ class OctopathStatus(Enum):
         return int & OctopathStatus.Conclusion.value == OctopathStatus.Conclusion.value
 
     def is_conclusion2(int) -> bool:
-        return (
-            int & OctopathStatus.Conclusion2.value == OctopathStatus.Conclusion2.value
-        )
+        return int & OctopathStatus.Conclusion2.value == OctopathStatus.Conclusion2.value
 
     def is_unknown(int) -> bool:
         return int == OctopathStatus.Unknown.value
+
+    def is_can_attack(int) -> bool:
+        return int & OctopathStatus.CanAttack.value == OctopathStatus.CanAttack.value
