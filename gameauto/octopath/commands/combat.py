@@ -104,7 +104,7 @@ class ManualAttackSingleRoundCommand(BaseOctopathCommand):
     __alternate_names__ = ["手动攻击单回合", "ManualAttackSingleRound"]
 
     @classmethod
-    def run(cls, ctx: OctopathTaskCtx, attackActions: str, wait_str="true", wait_max_str="30") -> CommandReturnCode:
+    def run(cls, ctx: OctopathTaskCtx, attackActions: str, wait_str="true", wait_max_str="30", isAllMaxStr="false") -> CommandReturnCode:
         """
         手动攻击单回合
 
@@ -112,6 +112,7 @@ class ManualAttackSingleRoundCommand(BaseOctopathCommand):
         """
         ctx.logger.info("手动攻击单回合")
         wait_for_next_round = wait_str.lower() == "true"
+        isAllMaxStr = isAllMaxStr.lower() == "true"
         # 解析攻击动作
         attackAction = attackActions.split(",")
         if len(attackAction) <= 0 or len(attackAction) > 4:
@@ -124,6 +125,8 @@ class ManualAttackSingleRoundCommand(BaseOctopathCommand):
         actions: list[Union[ACTION, KACTION]] = []
         for i in range(len(detailAttackCommnadline)):
             actions.extend(detailAttackCommnadline[i].get_actions(ctx))
+        if isAllMaxStr:
+            actions.append(ACTION("点击最大攻击", ClickIconAction, [IconName.BATTLE_ALL_MAX], 1))
         ret = cls.runActionChain(ctx, *actions)
         if ret != CommandReturnCode.SUCCESS:
             ctx.logger.error("手动攻击单回合失败")
@@ -201,16 +204,27 @@ class ForceSetEnemyCommand(BaseOctopathCommand):
 
 
 class AutoAttackCommand(BaseOctopathCommand):
-    __alternate_names__ = ["自动攻击", "AutoAttack"]
+    __alternate_names__ = ["委托战斗", "AutoAttack"]
 
     @classmethod
-    def run(cls, ctx: OctopathTaskCtx, attackActions: str) -> CommandReturnCode:
+    def run(cls, ctx: OctopathTaskCtx, max_wait_time_str="30") -> CommandReturnCode:
         """
-        自动攻击
+        委托战斗
 
         :return: 执行结果
         """
-        ctx.logger.info("自动攻击")
+        ctx.logger.info("委托战斗")
+        max_wait_time = int(max_wait_time_str)
         # 检查是否已经进入战斗
-
+        start_time = time.time()
+        cls.runActionChain(ctx, ACTION("点击委托", ClickIconAction, [IconName.BATTLE_DELEGATE], 1), ACTION("点击委托", ClickIconAction, [IconName.ATTACK], 1))
+        sleep(10)
+        while time.time() - start_time < max_wait_time:
+            ctx.renew_current_screen()
+            status = ctx.detect_status()
+            if not OctopathStatus.is_combat(status):
+                ctx.logger.debug("手动攻击单回合成功, 战斗结束")
+                return CommandReturnCode.SUCCESS
+            sleep(1)
+        ctx.logger.error("手动攻击单回合超时")
         return CommandReturnCode.FAILED

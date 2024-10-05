@@ -55,6 +55,7 @@ class ClickIconAction(BaseOctAction):
         grayscale=True,
         confidence=0.8,
         center=False,
+        screen=None,
     ):
         icon: ICON = getIconByIconName(icon_name)
         if icon is None:
@@ -75,6 +76,7 @@ class ClickIconAction(BaseOctAction):
             grayscale=grayscale,
             region=ctx.region,
             center=center,
+            screen_image=screen,
         )
 
         if box is None:
@@ -115,7 +117,7 @@ class ChangeSkillAction(BaseOctAction):
         ctx: OctopathTaskCtx,
         skill_pos: RELATIVE_POS,
         round: int,
-        duration: float = 0.4,
+        duration: float = 0.5,
     ):
         """
         切换技能
@@ -130,7 +132,10 @@ class ChangeSkillAction(BaseOctAction):
             start_pos = pos
             skill_round_offset: RELATIVE_POS = rpFrom720P(87 * round, 0)
             end_pos = _toAbsoluteForRelPos(RELATIVE_POS(skill_pos.x_ratio + skill_round_offset.x_ratio, skill_pos.y_ratio), ctx)
-            ctx.gui.drag(start_pos, end_pos, duration=duration)
+            if not start_pos.x == end_pos.x or not start_pos.y == end_pos.y:
+                ctx.gui.drag(start_pos, end_pos, duration=duration)
+            else:
+                ctx.gui.touch(start_pos)
         return None
 
 

@@ -132,6 +132,10 @@ class OctopathTaskCtx(BaseTaskCtx):
     def attack_region(self) -> Box:
         return Box(1000, 620, 150, 50)
 
+    @property
+    def dice_region(self) -> Box:
+        return Box(1000, 520, 300, 130)
+
     def _detect_status_with_screen_shot(self, screenshot: Union[str, Image.Image, Path]) -> int:
         # 检测当前状态, 根据屏幕截图判断当前状态
         status = OctopathStatus.Unknown.value
@@ -161,7 +165,10 @@ class OctopathTaskCtx(BaseTaskCtx):
         return list_with_offset
 
     def renew_current_screen(self) -> str:
-        path = os.path.join(os.environ.get("TEMP"), f"{int(time.time())}.png")
+        dir = os.path.join(os.environ.get("TEMP"), "octopath")
+        if not os.path.exists(dir):
+            os.makedirs(dir)
+        path = os.path.join(os.environ.get("TEMP"), "octopath", f"{int(time.time())}.png")
         self.gui.screenshot(path, region=self.region)
         self.logger.debug(f"截取app窗口的屏幕截图,区域范围为{self.region}, 保存到:{path}")
         self.update_screenshot(path)

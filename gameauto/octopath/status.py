@@ -12,6 +12,19 @@ class OctopathStatus(Enum):
     Conclusion = 1 << 6  # 结算中，可以点击退出
     Conclusion2 = 1 << 7  # 结算中,需要长按退出
     CanAttack = 1 << 8  # 可以攻击
+    Finish = 1 << 9  # 结束状态
+    ChooseRoad = 1 << 10  # 选择道路
+    ChooseWeekerOrStronger = 1 << 11  # 选择强弱
+    Start = 1 << 12  # 开始
+    CanQuit = 1 << 13  # 可以退出
+    Gameboard_Start = Gameboard | Start  # 游戏棋盘开始
+    Gameboard_FREE = Gameboard | Free  # 游戏棋盘中，可以投掷骰子
+    Gameboard_CONFIRM = Gameboard | Dialog  # 游戏棋盘中，需要确认
+    Gameboard_FINISH = Gameboard | Finish  # 游戏棋盘中，其他菜单
+    Gameboard_ChooseRoad = Gameboard | ChooseRoad  # 游戏棋盘中，需要选择道路
+    Gameboard_Combat = Gameboard | Combat  # 游戏棋盘中，战斗中
+    Gameboard_ChooseStrongOrWeeker = Gameboard | ChooseWeekerOrStronger  # 游戏棋盘中，需要选择强弱
+    Gameboard_CanQuit = Gameboard | CanQuit  # 游戏棋盘中，可以退出
 
     def is_free(int) -> bool:
         return int & OctopathStatus.Free.value == OctopathStatus.Free.value

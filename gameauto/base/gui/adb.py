@@ -41,6 +41,7 @@ class ADBGUI(BaseGUI):
                 self.logger.info(f"尝试连接ADB设备: {self.device_addr}")
                 result = adb.connect(self.device_addr, 10)
                 self.logger.info(f"连接ADB设备结果: {result}")
+                adb_serial = self.device_addr
 
             if adb_serial:
                 self.device = adb.device(serial=adb_serial)
