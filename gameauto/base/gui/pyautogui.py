@@ -88,3 +88,11 @@ class PYAutoGUI(BaseGUI):
         win.show()
         win.activate()
         return Window32App(win)
+
+    def drag(self, start: Point, end: Point, duration: float = 0.8):
+        """
+        拖拽
+        """
+        self.logger.debug(f"拖拽: {start} -> {end}")
+        pyautogui.moveTo(start)
+        pyautogui.dragTo(end, duration=duration)

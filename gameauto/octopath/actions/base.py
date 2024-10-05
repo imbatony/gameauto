@@ -4,6 +4,7 @@ from ...base import BaseAction, ActionRet, ActionRetStatus
 from ..ctx import OctopathTaskCtx
 import time
 import timeout_decorator
+from typing import NamedTuple, Union
 
 
 class ActionRunError(Exception):
@@ -22,14 +23,14 @@ class BaseOctAction(BaseAction):
         pass
 
     @classmethod
-    def run(cls, ctx: OctopathTaskCtx, *args) -> ActionRet:
+    def run(cls, ctx: OctopathTaskCtx, *args, **kargs) -> ActionRet:
         ret: ActionRet = ActionRet(False, ActionRetStatus.NOT_RUN, None, 0)
         # 记录开始时间
         start_time = time.time()
         # 执行具体的操作
         # 如果超时且break_if_timeout为True，则退出
         try:
-            ret.obj = cls.run_impl(ctx, *args)
+            ret.obj = cls.run_impl(ctx, *args, **kargs)
             ret.success = True
             ret.status = ActionRetStatus.SUCCESS
         except timeout_decorator.timeout_decorator.TimeoutError as e:
@@ -49,18 +50,36 @@ class BaseOctAction(BaseAction):
         return ret
 
 
-ACTION = collections.namedtuple("ACTION", ["desc", "action_cls", "args", "interval"])
+class ACTION(NamedTuple):
+    desc: str
+    action_cls: type[BaseOctAction]
+    args: tuple = ()
+    interval: int = 0
 
 
-def runActionChain(ctx: OctopathTaskCtx, actions: list[ACTION]) -> ActionRet:
+class KACTION(NamedTuple):
+    desc: str
+    action_cls: type[BaseOctAction]
+    kargs: dict
+    interval: int = 0
+
+
+def runActionChain(ctx: OctopathTaskCtx, actions: list[Union[ACTION, KACTION]]) -> ActionRet:
     ret: ActionRet = ActionRet(False, ActionRetStatus.NOT_RUN, None, 0)
     for action in actions:
         # 如果action为None，则跳过
         if action is None:
             continue
+        if not isinstance(action, KACTION) and not isinstance(action, ACTION):
+            raise ActionRunError("action必须为ACTION或KACTION类型")
+
         action_cls: type[BaseOctAction] = action.action_cls
         ctx.logger.debug(f"执行操作: {action.desc}")
-        ret: ActionRet = action_cls.run(ctx, *action.args)
+
+        if isinstance(action, KACTION):
+            ret: ActionRet = action_cls.run(ctx, **action.kargs)
+        else:
+            ret: ActionRet = action_cls.run(ctx, *action.args)
         if ret.status != ActionRetStatus.SUCCESS:
             ctx.logger.error(f"操作停止: {action.desc}")
             return ret

@@ -1,6 +1,7 @@
 from abc import abstractmethod
 from ...base import BaseCommand, BaseTaskCtx, CommandReturnCode
-from ..actions import ACTION, runActionChain
+from ..actions import ACTION, runActionChain, KACTION
+from typing import Union
 from ..ctx import OctopathTaskCtx
 
 
@@ -18,7 +19,7 @@ class BaseOctopathCommand(BaseCommand):
         raise NotImplementedError
 
     @classmethod
-    def _runActions(cls, ctx: OctopathTaskCtx, actions: list[ACTION]) -> CommandReturnCode:
+    def _runActions(cls, ctx: OctopathTaskCtx, actions: list[Union[ACTION, KACTION]]) -> CommandReturnCode:
         command_name = cls.__alternate_names__[0]
         ret = runActionChain(ctx, actions)
         if not ret.success:
@@ -27,7 +28,7 @@ class BaseOctopathCommand(BaseCommand):
         return CommandReturnCode.SUCCESS
 
     @classmethod
-    def runAction(cls, ctx: OctopathTaskCtx, action: ACTION) -> CommandReturnCode:
+    def runAction(cls, ctx: OctopathTaskCtx, action: Union[ACTION, KACTION]) -> CommandReturnCode:
         command_name = cls.__alternate_names__[0]
         ret = runActionChain(ctx, [action])
         if not ret.success:
@@ -36,7 +37,7 @@ class BaseOctopathCommand(BaseCommand):
         return CommandReturnCode.SUCCESS
 
     @classmethod
-    def runActionChain(cls, ctx: OctopathTaskCtx, *actions: ACTION) -> CommandReturnCode:
+    def runActionChain(cls, ctx: OctopathTaskCtx, *actions: Union[ACTION, KACTION]) -> CommandReturnCode:
         action_list = list(actions)
         return cls._runActions(ctx, action_list)
 

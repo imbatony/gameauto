@@ -1,18 +1,12 @@
 {
-    "logging": {
-        "level": "DEBUG",
-        "file": "logs/octopath.log"
-    },
-    "ocr": {
-        "use_gpu": false,
-        "gpu_id": 0
-    },
     "game": {
-        "app_name": "MuMu模拟器12",
-        "x_offset": 0,
-        "y_offset": 50,
         "width": 1280,
-        "height": 720
+        "height": 720,
+        "x_offset": 0,
+        "y_offset": 0
     },
-    "debug": true
+    "debug": true,
+    "logging": {
+        "file": "log/octopath.log"
+    }
 }
