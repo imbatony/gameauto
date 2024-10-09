@@ -90,13 +90,21 @@ class IconName(Enum):
     # 竞技场
     ARENA_EXIT_CONFIRM = "竞技场-退出-确认"
     ARENA_EXIT_CLOSE = "竞技场-退出-关闭"
+    ARENA_EXIT_RETURN = "竞技场-退出-返回"
 
     # 游戏盘
     GAME_BOARD_PLAY = "游戏盘-开始"
     GAME_BOARD_DICE = "游戏盘-骰子"
+    GAME_BOARD_DICE2 = "游戏盘-骰子"
     GAME_BOARD_CONFIRM = "游戏盘-确认"
     GAME_BOARD_FINISH = "游戏盘-关闭"
+    GAME_BOARD_QUESTION_NEED = "游戏盘-问题-需要"
+    GAME_BOARD_QUESTION_NONEED = "游戏盘-问题-不需要"
+    GAME_BOARD_QUESTION_IGNORE = "游戏盘-问题-忽略"
+    GAME_BOARD_QUESTION_LOVER = "游戏盘-问题-情人"
     GAME_BOARD_UP = "游戏盘-向上岔路"
+    GAME_BOARD_LEFT = "游戏盘-向左岔路"
+    GAME_BOARD_RIGHT = "游戏盘-向右岔路"
     GAME_BOARD_STORNGER = "游戏盘-敌人强化"
     GAME_BOARD_WEEKER = "游戏盘-敌人弱化"
     GAME_BOARD_OPTION = "游戏盘-选项"
@@ -201,15 +209,23 @@ icons: dict[IconName, ICON] = {
     # 竞技场
     IconName.ARENA_EXIT_CONFIRM: ICON(ASSET("arena_exit_confirm.png", "icon"), None),
     IconName.ARENA_EXIT_CLOSE: ICON(ASSET("arena_exit_close.png", "icon"), None),
+    IconName.ARENA_EXIT_RETURN: ICON(None, rpFrom720P(586, 638)),
     # 游戏盘
     IconName.GAME_BOARD_PLAY: ICON(ASSET("play.png", "icon"), None),
     IconName.GAME_BOARD_DICE: ICON(ASSET("dice.png", "icon"), None),
+    IconName.GAME_BOARD_DICE2: ICON(ASSET("dice2.png", "icon"), None),
     IconName.GAME_BOARD_CONFIRM: ICON(ASSET("confirm.png", "icon"), None),
+    IconName.GAME_BOARD_QUESTION_IGNORE: ICON(ASSET("question_ignore.png", "icon"), None),
+    IconName.GAME_BOARD_QUESTION_LOVER: ICON(ASSET("question_lover.png", "icon"), None),
     IconName.GAME_BOARD_FINISH: ICON(ASSET("game_board_finish.png", "icon"), None),
     IconName.GAME_BOARD_UP: ICON(ASSET("game_board_up.png", "icon"), None),
+    IconName.GAME_BOARD_LEFT: ICON(ASSET("game_board_left.png", "icon"), None),
+    IconName.GAME_BOARD_RIGHT: ICON(ASSET("game_board_right.png", "icon"), None),
     IconName.GAME_BOARD_STORNGER: ICON(ASSET("game_board_stronger.png", "icon"), None),
     IconName.GAME_BOARD_OPTION: ICON(ASSET("game_board_option.png", "icon"), None),
     IconName.GAME_BOARD_END: ICON(ASSET("game_board_end.png", "icon"), None),
+    IconName.GAME_BOARD_QUESTION_NEED: ICON(ASSET("question_need.png", "icon"), None),
+    IconName.GAME_BOARD_QUESTION_NONEED: ICON(ASSET("question_no_need.png", "icon"), None),
     # battle
     IconName.BATTLE_ALL_MAX: ICON(None, rpFrom720P(862, 642)),
     IconName.BATTLE_FORCE_END: ICON(None, rpFrom720P(584, 644)),

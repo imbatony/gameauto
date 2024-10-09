@@ -13,5 +13,5 @@
             "device_addr": "127.0.0.1:16384"
         }
     },
-    "debug": true
+    "debug": false
 }

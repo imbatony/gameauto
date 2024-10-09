@@ -104,7 +104,7 @@ class ManualAttackSingleRoundCommand(BaseOctopathCommand):
     __alternate_names__ = ["手动攻击单回合", "ManualAttackSingleRound"]
 
     @classmethod
-    def run(cls, ctx: OctopathTaskCtx, attackActions: str, wait_str="true", wait_max_str="30", isAllMaxStr="false") -> CommandReturnCode:
+    def run(cls, ctx: OctopathTaskCtx, attackActions: str, wait_str="true", wait_max_str="40", isAllMaxStr="false") -> CommandReturnCode:
         """
         手动攻击单回合
 
@@ -207,7 +207,7 @@ class AutoAttackCommand(BaseOctopathCommand):
     __alternate_names__ = ["委托战斗", "AutoAttack"]
 
     @classmethod
-    def run(cls, ctx: OctopathTaskCtx, max_wait_time_str="30") -> CommandReturnCode:
+    def run(cls, ctx: OctopathTaskCtx, max_wait_time_str="30", min_wait_time_str="10") -> CommandReturnCode:
         """
         委托战斗
 
@@ -215,10 +215,11 @@ class AutoAttackCommand(BaseOctopathCommand):
         """
         ctx.logger.info("委托战斗")
         max_wait_time = int(max_wait_time_str)
+        min_wait_time = int(min_wait_time_str)
         # 检查是否已经进入战斗
         start_time = time.time()
         cls.runActionChain(ctx, ACTION("点击委托", ClickIconAction, [IconName.BATTLE_DELEGATE], 1), ACTION("点击委托", ClickIconAction, [IconName.ATTACK], 1))
-        sleep(10)
+        sleep(min_wait_time)
         while time.time() - start_time < max_wait_time:
             ctx.renew_current_screen()
             status = ctx.detect_status()

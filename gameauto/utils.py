@@ -15,11 +15,13 @@ def get_logger(name, config) -> Logger:
     if logger.hasHandlers() and hasattr(logger, "initialized"):
         return logger
     logger.propagate = False
-    level = config.get("debug", False) and "DEBUG" or "INFO"
+    debug: bool = config.get("debug", False)
+    level = debug and "DEBUG" or "INFO"
     logger.setLevel(getattr(logging, level))
     consoleHeader = logging.StreamHandler()
+    console_default_log_format = debug and "%(log_color)s%(levelname)s%(reset)s\t%(pathname)s:%(lineno)d - %(message)s" or "%(log_color)s%(message)s%(reset)s"
     formatter = ColoredFormatter(
-        "%(log_color)s%(levelname)s%(reset)s\t%(pathname)s:%(lineno)d - %(message)s",
+        console_default_log_format,
         datefmt=None,
         reset=True,
         log_colors={

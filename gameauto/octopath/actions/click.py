@@ -117,7 +117,7 @@ class ChangeSkillAction(BaseOctAction):
         ctx: OctopathTaskCtx,
         skill_pos: RELATIVE_POS,
         round: int,
-        duration: float = 0.5,
+        duration: float = 0.8,
     ):
         """
         切换技能

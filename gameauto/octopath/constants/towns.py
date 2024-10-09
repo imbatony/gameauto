@@ -17,6 +17,7 @@ town_names: dict[str, TOWN] = {
     "牧羊岩": TOWN("牧羊岩", World.NORMAL, True, "牧羊岩", None),
     "无名小镇": TOWN("无名小镇", World.NORMAL, True, "无名小镇", None),
     "克拉古斯比亚": TOWN("克拉古斯比亚", World.NORMAL, True, "克拉古斯比亚", None),
+    "库利亚布鲁克": TOWN("库利亚布鲁克", World.NORMAL, True, "库利亚", None),
     "边狱-克拉古斯比亚": TOWN("边狱-克拉古斯比亚", World.HELL, True, "克拉古斯比亚", None),
     "边狱-瓦洛雷": TOWN("边狱-瓦洛雷", World.HELL, True, "瓦洛雷", None),
 }

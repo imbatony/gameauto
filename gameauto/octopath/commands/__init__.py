@@ -8,10 +8,10 @@ from .force import ForceExitToMenuCommand
 from .move import ChangeTownCommand, ForceChangeTownCommand, ChangeToWildCommand, MoveViaMiniMapCommand, EnterHotelAndSleepCommand
 from .daily import GetItemsInNamelessTown
 from .test import TestCommand
-from .wait import WaitCommand, WaitUntilIconFoundCommand, LongClickWaitEnterBattleCommand
+from .wait import WaitCommand, WaitUntilIconFoundCommand, LongClickWaitEnterBattleCommand, ForceExitArenaCommand
 from .click import ClickIconCommand, ClickPosCommand, WalkAroundCommand
 from .combat import ManualAttackSingleRoundCommand, ManualAttackCommand, ForceSetEnemyCommand
-from .gameboard import WealthGameBoardStage1Command
+from .gameboard import WealthGameBoardStage1Command, FameGameBoardStage1Command, PowerGameBoardStage1Command
 
 command_name_type_cahce: dict[str, type[BaseOctopathCommand]] = {}
 
@@ -63,4 +63,7 @@ __all__ = [
     "ManualAttackCommand",
     "ForceSetEnemyCommand",
     "WealthGameBoardStage1Command",
+    "FameGameBoardStage1Command",
+    "PowerGameBoardStage1Command",
+    "ForceExitArenaCommand",
 ]

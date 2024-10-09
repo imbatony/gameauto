@@ -161,10 +161,35 @@ class LongClickAndExitFightCommand(BaseOctopathCommand):
         # 需要增加战斗异常时强制退出的逻辑
         return cls.runActionChain(
             ctx,
-            ACTION("长按退出竞技场", ClickAction, [None, 5], 4),
+            ACTION("长按退出竞技场", ClickAction, [None, 6], 4),
             ACTION("点击退出竞技场", ClickIconAction, [IconName.ARENA_EXIT_CONFIRM], 2),
             ACTION("点击退出竞技场", ClickIconAction, [IconName.ARENA_EXIT_CLOSE], 4),
         )
+
+
+class ForceExitArenaCommand(BaseOctopathCommand):
+    __alternate_names__ = ["强制退出退出竞技场", "ForceExitBattle"]
+
+    @classmethod
+    def run(cls, ctx: OctopathTaskCtx) -> CommandReturnCode:
+        """
+        强制退出退出竞技场
+
+        :return: 执行结果
+        """
+        ctx.logger.info("强制退出退出竞技场")
+
+        # 刷新状态
+        ctx.renew_status(False)
+        if not ctx.isInCombat():
+            return LongClickAndExitFightCommand.run(ctx)
+        else:
+            return cls.runActionChain(
+                ctx,
+                ACTION("点击退出竞技场", ClickIconAction, [IconName.ARENA_EXIT_RETURN], 2),
+                ACTION("点击是", ClickIconAction, [IconName.YES], 5),
+                ACTION("点击关闭", ClickIconAction, [IconName.ARENA_EXIT_CLOSE], 4),
+            )
 
 
 class WaitBattleEndCommand(BaseOctopathCommand):
