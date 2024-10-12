@@ -46,7 +46,7 @@ jobs:
       - uses: thedoctor0/zip-release@0.7.5
         name: Zip distributions
         with:
-          directory: dist/gameauto
+          path: dist/gameauto
           filename: gameauto-${{ github.event.release.tag_name }}.zip
           type: 'zip'
 
