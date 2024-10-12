@@ -42,11 +42,13 @@ jobs:
         run: |
           # NOTE: put your own standalone executable build steps here.
           pyinstaller ./main.spec
-
-      - uses: montudor/action-zip@v1
+      
+      - uses: thedoctor0/zip-release@0.7.5
         name: Zip distributions
         with:
-          args: zip -qq -r gameauto-${{ github.event.release.tag_name }}.zip dist/gameauto
+          directory: dist/gameauto
+          filename: gameauto-${{ github.event.release.tag_name }}.zip
+          type: 'zip'
 
       - name: Upload distributions
         uses: actions/upload-artifact@v4
