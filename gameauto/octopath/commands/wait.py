@@ -187,8 +187,8 @@ class ForceExitArenaCommand(BaseOctopathCommand):
             return cls.runActionChain(
                 ctx,
                 ACTION("点击退出竞技场", ClickIconAction, [IconName.ARENA_EXIT_RETURN], 2),
-                ACTION("点击是", ClickIconAction, [IconName.YES], 5),
-                ACTION("点击关闭", ClickIconAction, [IconName.ARENA_EXIT_CLOSE], 4),
+                ACTION("点击是", ClickIconAction, [IconName.YES], 6),
+                ACTION("点击关闭", ClickIconAction, [IconName.ARENA_EXIT_CLOSE], 1),
             )
 
 
