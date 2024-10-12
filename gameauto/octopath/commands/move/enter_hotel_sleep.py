@@ -1,11 +1,11 @@
-from ...constants import IconName, getAssetPath, getIconByIconName
+from ...constants import IconName
 from ..base import (
     BaseOctopathCommand,
     CommandReturnCode,
 )
 
 from ...ctx import OctopathTaskCtx
-from ...actions import ClickIconAction, ACTION, ClickAction, KACTION
+from ...actions import ClickIconAction, ACTION, ClickAction
 from ....base import Box
 
 

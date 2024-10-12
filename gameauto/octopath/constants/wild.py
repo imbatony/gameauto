@@ -1,6 +1,5 @@
 import collections
 from .towns import getTownByName
-from .assets import ASSET
 from .icons import IconName
 
 WILD = collections.namedtuple("WILD", ["town_name_near_by", "icon_name"])
@@ -10,6 +9,7 @@ wild_names: dict[str, WILD] = {
     "边狱-瓦洛雷后森": WILD("边狱-瓦洛雷", IconName.MAP_WILD_FOREST_HELL),
     "恐怖山谷": WILD("牧羊岩", IconName.MAP_WILD_GORGE),
     "静湖的地下遗址": WILD("库利亚布鲁克", IconName.MAP_WILD_RUINS),
+    "原初洞穴": WILD("恩波格洛", IconName.MAP_WILD_CAVE),
 }
 
 
