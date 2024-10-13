@@ -1,4 +1,5 @@
 import time
+import uuid
 from ..base import BaseTaskCtx
 from ..gameconstants import DEFAULT_ACTION_DELAY
 from .constants import TOWN, WILD, getIconPathByIconName, IconName
@@ -168,7 +169,8 @@ class OctopathTaskCtx(BaseTaskCtx):
         dir = os.path.join(os.environ.get("TEMP"), "octopath")
         if not os.path.exists(dir):
             os.makedirs(dir)
-        path = os.path.join(os.environ.get("TEMP"), "octopath", f"{int(time.time())}.png")
+        file_name = uuid.uuid1().__str__() + ".png"
+        path = os.path.join(os.environ.get("TEMP"), "octopath", file_name)
         self.gui.screenshot(path, region=self.region)
         self.logger.debug(f"截取app窗口的屏幕截图,区域范围为{self.region}, 保存到:{path}")
         self.update_screenshot(path)

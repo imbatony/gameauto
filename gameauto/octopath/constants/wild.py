@@ -10,6 +10,7 @@ wild_names: dict[str, WILD] = {
     "恐怖山谷": WILD("牧羊岩", IconName.MAP_WILD_GORGE),
     "静湖的地下遗址": WILD("库利亚布鲁克", IconName.MAP_WILD_RUINS),
     "原初洞穴": WILD("恩波格洛", IconName.MAP_WILD_CAVE),
+    "热腾的泉窟": WILD("贝尔肯", IconName.MAP_WILD_CAVE),
 }
 
 
