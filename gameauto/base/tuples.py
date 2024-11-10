@@ -3,8 +3,20 @@ from typing import NamedTuple
 
 
 Point = collections.namedtuple("Point", "x y")
-RGB = collections.namedtuple("RGB", "red green blue")
 RGBPoint = collections.namedtuple("RGBPoint", "rgb point")
+RGB = collections.namedtuple("RGB", "red green blue")
+
+
+class RGB(NamedTuple):
+    red: int
+    green: int
+    blue: int
+
+    def __eq__(self, other: RGB) -> bool:
+        return self.red == other.red and self.green == other.green and self.blue == other.blue
+
+    def isSimilar(self, other: RGB, threshold=10) -> bool:
+        return abs(self.red - other.red) < threshold and abs(self.green - other.green) < threshold and abs(self.blue - other.blue) < threshold
 
 
 class TxtBox(NamedTuple):

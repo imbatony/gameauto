@@ -112,7 +112,9 @@ class BaseGUI(object):
         """
         pass
 
-    def locate(self, needleImage: Union[str, Image.Image, Path], haystackImage: Union[str, Image.Image, Path], **kwargs) -> Optional[Box]:
+    def locate(
+        self, needleImage: Union[str, Image.Image, Path, np.ndarray], haystackImage: Union[str, Image.Image, Path, np.ndarray], **kwargs
+    ) -> Optional[Box]:
         """
         搜索匹配的图片位置, 返回中心点
         Args:
@@ -124,8 +126,8 @@ class BaseGUI(object):
             self.logger.debug("图片为空")
             return None
         # pyautogui只支持str类型的路径
-        needleImage = self._preprocess_images(needleImage)
-        haystackImage = self._preprocess_images(haystackImage)
+        needleImage = self.PreProcess_Images(needleImage)
+        haystackImage = self.PreProcess_Images(haystackImage)
         try:
             box = pyautogui.locate(needleImage, haystackImage, **kwargs)
         except ImageNotFoundException as e:
@@ -136,7 +138,7 @@ class BaseGUI(object):
             return Box(box[0], box[1], box[2], box[3])
 
     @classmethod
-    def _preprocess_images(cls, img: Union[str, Path, Image.Image, np.ndarray]) -> np.ndarray:
+    def PreProcess_Images(cls, img: Union[str, Path, Image.Image, np.ndarray]) -> np.ndarray:
         """
 
         Args:
@@ -149,15 +151,17 @@ class BaseGUI(object):
         if isinstance(img, (str, Path)):
             if not os.path.isfile(img):
                 raise FileNotFoundError(img)
-            return cv2.imread(img, cv2.IMREAD_COLOR)
+            return cv2.imread(img, cv2.IMREAD_GRAYSCALE)
         elif isinstance(img, Image.Image):
             img = np.asarray(img.convert("RGB"), dtype="float32")
         if isinstance(img, np.ndarray):
-            return cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+            return img
         else:
             raise TypeError("type %s is not supported now" % str(type(img)))
 
-    def locateAll(self, needleImage: Union[str, Image.Image, Path], haystackImage: Union[str, Image.Image, Path], **kwargs) -> Generator[Box, None, None]:
+    def locateAll(
+        self, needleImage: Union[str, Image.Image, Path, np.ndarray], haystackImage: Union[str, Image.Image, Path, np.ndarray], **kwargs
+    ) -> Generator[Box, None, None]:
         """
         搜索匹配的图片位置, 返回矩形框
         Args:

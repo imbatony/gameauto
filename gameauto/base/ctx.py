@@ -90,6 +90,9 @@ class BaseTaskCtx(object):
     def region(self) -> Box:
         return Box(self.left, self.top, self.width, self.height)
 
+    def get_absolute_pos(self, x, y) -> Point:
+        return Point(x + self.left, y + self.top)
+
     def update_app(self, app):
         self.app = app
         return self

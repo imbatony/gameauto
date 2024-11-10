@@ -109,6 +109,7 @@ class IconName(Enum):
     GAME_BOARD_WEEKER = "游戏盘-敌人弱化"
     GAME_BOARD_OPTION = "游戏盘-选项"
     GAME_BOARD_END = "游戏盘-结束"
+    GAME_BOARD_CHOOSE_ROAD_POWER = "游戏盘-选择路-霸者"
 
     # 战斗
     BATTLE_ALL_MAX = "战斗-全体最大"
@@ -226,6 +227,7 @@ icons: dict[IconName, ICON] = {
     IconName.GAME_BOARD_END: ICON(ASSET("game_board_end.png", "icon"), None),
     IconName.GAME_BOARD_QUESTION_NEED: ICON(ASSET("question_need.png", "icon"), None),
     IconName.GAME_BOARD_QUESTION_NONEED: ICON(ASSET("question_no_need.png", "icon"), None),
+    IconName.GAME_BOARD_CHOOSE_ROAD_POWER: ICON(ASSET("choose_road_power.png", "icon"), None),
     # battle
     IconName.BATTLE_ALL_MAX: ICON(None, rpFrom720P(862, 642)),
     IconName.BATTLE_FORCE_END: ICON(None, rpFrom720P(584, 644)),

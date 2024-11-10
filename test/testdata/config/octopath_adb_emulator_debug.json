@@ -1,0 +1,17 @@
+{
+    "game": {
+        "gui": "adb",
+        "width": 1280,
+        "height": 720,
+        "x_offset": 0,
+        "y_offset": 0,
+        "adb": {
+            "host": "127.0.0.1",
+            "port": 5037,
+            "actvity": "com.epicgames.ue4.GameActivity",
+            "package": "com.netease.ma167.bilibili",
+            "device_addr": "127.0.0.1:16384"
+        }
+    },
+    "debug": true
+}
