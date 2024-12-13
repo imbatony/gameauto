@@ -14,4 +14,6 @@ __all__ = [
     "DragLeftRightAction",
     "ChangeSkillAction",
     "ClickExchangeAction",
+    "DragUpDownAction",
+    "KACTION",
 ]

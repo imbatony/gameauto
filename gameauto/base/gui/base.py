@@ -128,7 +128,7 @@ class BaseGUI(object):
         haystackImage = self._preprocess_images(haystackImage)
         try:
             box = pyautogui.locate(needleImage, haystackImage, **kwargs)
-        except ImageNotFoundException as e:
+        except ImageNotFoundException:
             return None
         if box is None:
             return None
@@ -178,7 +178,7 @@ class BaseGUI(object):
                 return None
             for box in genertor:
                 yield Box(box[0], box[1], box[2], box[3])
-        except ImageNotFoundException as e:
+        except ImageNotFoundException:
             yield None
 
     def ocr(

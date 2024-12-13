@@ -51,6 +51,7 @@ class IconName(Enum):
 
     MAP_WILD_GORGE_HELL = "野外-峡谷-边狱"
     MAP_WILD_FOREST_HELL = "野外-森林-边狱"
+    MAP_WILD_GATE_HELL = "野外-门-边狱"
 
     # traits
     TRAITS_IN_BATTLE = "特征-战斗"
@@ -176,6 +177,7 @@ icons: dict[IconName, ICON] = {
     IconName.MAP_WILD_RUINS: ICON(ASSET("wild_ruins.png", "map"), None),
     IconName.MAP_WILD_GORGE_HELL: ICON(ASSET("wild_gorge_hell.png", "map"), None),
     IconName.MAP_WILD_FOREST_HELL: ICON(ASSET("wild_forest_hell.png", "map"), None),
+    IconName.MAP_WILD_GATE_HELL: ICON(ASSET("wild_gate_hell.png", "map"), None),
     # traits
     IconName.TRAITS_IN_BATTLE: ICON(ASSET("battle.png", "traits"), None),
     IconName.TRAITS_ENEMY: ICON(ASSET("enemy.png", "traits"), None),
