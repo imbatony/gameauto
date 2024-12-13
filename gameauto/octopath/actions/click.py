@@ -186,7 +186,7 @@ class DragLeftRightAction(BaseOctAction):
         start_pos: Point = None,
     ):
         """
-        来回拖动
+        左右拖动
 
         Args:
             duration: 单次拖动时间
@@ -205,6 +205,41 @@ class DragLeftRightAction(BaseOctAction):
             start_pos,
             left=left,
             right=right,
+            duration=duration,
+            single_duration=single_duration,
+        )
+
+
+class DragUpDownAction(BaseOctAction):
+    @classmethod
+    def run_impl(
+        cls,
+        ctx: OctopathTaskCtx,
+        single_duration=0.2,
+        duration: float = 0.8,
+        height_ratio: float = 0.0625,
+        start_pos: Point = None,
+    ):
+        """
+        上下拖动
+
+        Args:
+            duration: 单次拖动时间
+            in
+            height_ratio: 拖动的高度占屏幕高度的比例
+
+        """
+        if start_pos is None:
+            # 如果没有指定起始位置, 默认从屏幕中心开始
+            start_pos = Point(ctx.left + ctx.width // 2, ctx.top + ctx.height // 2)
+
+        up = Point(start_pos.x, start_pos.y - int(ctx.height * height_ratio))
+        down = Point(start_pos.x, start_pos.y + int(ctx.height * height_ratio))
+
+        ctx.gui.dragUpDown(
+            start_pos,
+            up=up,
+            down=down,
             duration=duration,
             single_duration=single_duration,
         )

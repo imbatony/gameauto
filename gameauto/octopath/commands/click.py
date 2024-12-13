@@ -1,12 +1,6 @@
 from .base import BaseOctopathCommand, CommandReturnCode
 from ..ctx import OctopathTaskCtx
-from ..actions import (
-    ClickIconAction,
-    ACTION,
-    ClickAction,
-    ClickCenterIconAction,
-    DragLeftRightAction,
-)
+from ..actions import ClickIconAction, ACTION, ClickAction, ClickCenterIconAction, DragLeftRightAction
 from ..constants import getIconNameByName
 from ...base.tuples import Point
 
@@ -103,7 +97,7 @@ class WalkAroundCommand(BaseOctopathCommand):
     __alternate_names__ = ["原地走动", "WalkAround"]
 
     @classmethod
-    def run(cls, ctx: OctopathTaskCtx, duration_str: str = "8") -> CommandReturnCode:
+    def run(cls, ctx: OctopathTaskCtx, duration_str: str = "8", left_right="true") -> CommandReturnCode:
         """
         原地走动, 用于触怪
 
@@ -113,9 +107,11 @@ class WalkAroundCommand(BaseOctopathCommand):
 
         ctx.logger.info("原地走动")
         duration = float(duration_str)
+        left_right = left_right.lower() == "true"
         start_time = ctx.getCurTime()
+        action = ACTION("左右移动", DragLeftRightAction, [1 / 8, 2], 0)
         while ctx.getCurTime() - start_time < duration:
-            code = cls.runAction(ctx, ACTION("左右移动", DragLeftRightAction, [1 / 8, 2], 0))
+            code = cls.runAction(ctx, action)
             if code != CommandReturnCode.SUCCESS:
                 return code
 

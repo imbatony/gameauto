@@ -9,6 +9,7 @@ wild_names: dict[str, WILD] = {
     "边狱-艾德拉斯城": WILD("边狱-克拉古斯比亚", IconName.MAP_WILD_PALACE),
     "边狱-瓦洛雷后森": WILD("边狱-瓦洛雷", IconName.MAP_WILD_FOREST_HELL),
     "边狱-荷鲁布尔古城": WILD("边狱-荷鲁布尔古", IconName.MAP_WILD_PALACE),
+    "悔恨之间": WILD("边狱-荷鲁布尔古", IconName.MAP_WILD_GATE_HELL),
     "恐怖山谷": WILD("牧羊岩", IconName.MAP_WILD_GORGE),
     "静湖的地下遗址": WILD("库利亚布鲁克", IconName.MAP_WILD_RUINS),
     "原初洞穴": WILD("恩波格洛", IconName.MAP_WILD_CAVE),

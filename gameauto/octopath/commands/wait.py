@@ -1,4 +1,3 @@
-import asyncio
 import queue
 import threading
 from time import sleep
