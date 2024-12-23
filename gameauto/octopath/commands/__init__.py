@@ -11,7 +11,7 @@ from .test import TestCommand
 from .wait import WaitCommand, WaitUntilIconFoundCommand, LongClickWaitEnterBattleCommand, ForceExitArenaCommand
 from .click import ClickIconCommand, ClickPosCommand, WalkAroundCommand
 from .combat import ManualAttackSingleRoundCommand, ManualAttackCommand, ForceSetEnemyCommand
-from .gameboard import WealthGameBoardStage1Command, FameGameBoardStage1Command, PowerGameBoardStage1Command
+from .gameboard import WealthGameBoardStage1Command, FameGameBoardStage1Command, PowerGameBoardStartCommand, RestRoadCommand
 
 command_name_type_cahce: dict[str, type[BaseOctopathCommand]] = {}
 
@@ -64,6 +64,7 @@ __all__ = [
     "ForceSetEnemyCommand",
     "WealthGameBoardStage1Command",
     "FameGameBoardStage1Command",
-    "PowerGameBoardStage1Command",
+    "PowerGameBoardStartCommand",
     "ForceExitArenaCommand",
+    "RestRoadCommand",
 ]

@@ -1,7 +1,7 @@
 from __future__ import absolute_import
 
 from .base import ActionRunError, BaseOctAction, ACTION, runActionChain, KACTION
-from .click import ClickAction, ClickIconAction, ClickCenterIconAction, DragLeftRightAction, ChangeSkillAction, ClickExchangeAction
+from .click import ClickAction, ClickIconAction, ClickCenterIconAction, DragLeftRightAction, ChangeSkillAction, ClickExchangeAction, ClickDiceAction
 
 __all__ = [
     "ActionRunError",
@@ -14,6 +14,7 @@ __all__ = [
     "DragLeftRightAction",
     "ChangeSkillAction",
     "ClickExchangeAction",
+    "ClickDiceAction",
     "DragUpDownAction",
     "KACTION",
 ]

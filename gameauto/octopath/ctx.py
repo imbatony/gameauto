@@ -2,7 +2,7 @@ import time
 import uuid
 from ..base import BaseTaskCtx
 from ..gameconstants import DEFAULT_ACTION_DELAY
-from .constants import TOWN, WILD, getIconPathByIconName, IconName
+from .constants import TOWN, WILD, getIconPathByIconName, IconName, RELATIVE_POS
 from PIL import Image
 from typing import Optional, Union
 from ..base.tuples import Point, TxtBox, Box
@@ -23,9 +23,15 @@ class OctopathTaskCtx(BaseTaskCtx):
         self.battle_exchange = [False, False, False, False]
         self.enemy_positions = []
         self.enemy_total = 0
+        self.chosse_road = 0
 
     def getCurTime(self):
         return time.time()
+
+    def updateChooseRoad(self, total: int = 4):
+        cur = self.chosse_road
+        self.chosse_road = (self.chosse_road + 1) % total
+        return cur
 
     def findImageInScreen(self, image: Union[str, Image.Image, Path, IconName], screenshot: Union[str, Image.Image, Path] = None, **kargs) -> Box | None:
 
@@ -39,11 +45,18 @@ class OctopathTaskCtx(BaseTaskCtx):
         if isinstance(image, IconName):
             image = getIconPathByIconName(image)
         try:
-            self.logger.debug(f"查找图片: {image} in {screenshot}")
             return self.gui.locate(image, screenshot, **kargs)
         except Exception:
             self.logger.exception(f"查找图片失败")
             return None
+
+    def getCurrentScreenAsImage(self) -> Image.Image:
+        if self.cur_screenshot is None:
+            self.renew_current_screen()
+        return Image.open(self.cur_screenshot)
+
+    def get_absolute_pos_from_rel_radio(self, rel_radio: RELATIVE_POS) -> Point:
+        return self.get_absolute_pos(rel_radio.x_ratio * self.width, rel_radio.y_ratio * self.height)
 
     def locateCenterOnScreen(
         self,

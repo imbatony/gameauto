@@ -1,5 +1,5 @@
 from .towns import getTownByName, TOWN, getWorldIconNameByTown
-from .assets import getAssetPath, ASSET, RELATIVE_POS, DETACTABLE
+from .assets import getAssetPath, ASSET, RELATIVE_POS, DETACTABLE, rgbPointFrom720P, RGBRelPoint
 from .icons import (
     getIconByIconName,
     ICON,
@@ -34,4 +34,6 @@ __all__ = [
     "getTeammateIconNameByNumber",
     "getSkillIconByNumber",
     "rpFrom720P",
+    "rgbPointFrom720P",
+    "RGBRelPoint",
 ]

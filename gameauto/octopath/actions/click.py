@@ -139,6 +139,26 @@ class ChangeSkillAction(BaseOctAction):
         return None
 
 
+class ClickDiceAction(BaseOctAction):
+    @classmethod
+    def run_impl(
+        cls,
+        ctx: OctopathTaskCtx,
+        center: Point,
+        boost: int = 0,
+    ):
+        """
+        点击骰子
+        """
+        if boost == 0:
+            ctx.gui.touch(center)
+
+        else:
+            # 如果有加成, 需要拖拽
+            end_pos = Point(center.x, center.y - 80 * boost)
+            ctx.gui.drag(center, end_pos)
+
+
 class ClickExchangeAction(BaseOctAction):
     @classmethod
     def run_impl(
