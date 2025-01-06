@@ -37,10 +37,14 @@ class IconName(Enum):
 
     WORLD_NORMAL = "现世"
     WORLD_HELL = "边狱"
+    WORLD_HAVEN = "圣域"
 
     HOTEL_MINI_MAP = "旅馆-小地图"
+    HOTEL_MINI_MAP_2 = "旅馆-小地图2"  # 除国服外的旅馆小地图图标
     BED = "床"
+    BED_2 = "床2"  # 除国服外的床的图标
     HOTEL = "旅馆"
+    HOTEL_2 = "旅馆2"  # 除国服外的床的旅馆图标
 
     MAP_WILD_GORGE = "野外-峡谷"
     MAP_WILD_PALACE = "野外-宫殿"
@@ -48,6 +52,7 @@ class IconName(Enum):
     MAP_WILD_FOREST = "野外-森林"
     MAP_WILD_SITE = "野外-遗迹"
     MAP_WILD_RUINS = "野外-废墟"
+    MAP_WILD_TEMPLE = "野外-神殿"
 
     MAP_WILD_GORGE_HELL = "野外-峡谷-边狱"
     MAP_WILD_FOREST_HELL = "野外-森林-边狱"
@@ -166,9 +171,14 @@ icons: dict[IconName, ICON] = {
     IconName.MINI_MAP: ICON(None, rpFrom720P(1000, 100)),
     IconName.WORLD_NORMAL: ICON(None, rpFrom720P(180, 160)),
     IconName.WORLD_HELL: ICON(None, rpFrom720P(180, 260)),
+    IconName.WORLD_HAVEN: ICON(None, rpFrom720P(180, 360)),
     IconName.HOTEL_MINI_MAP: ICON(ASSET("hotel_mini_map.png", "icon"), None),
+    IconName.HOTEL_MINI_MAP_2: ICON(ASSET("hotel_mini_map_2.png", "icon"), None),
+
     IconName.BED: ICON(ASSET("bed.png", "icon"), None),
+    IconName.BED_2: ICON(ASSET("bed_2.png", "icon"), None),
     IconName.HOTEL: ICON(ASSET("hotel.png", "icon"), None),
+    IconName.HOTEL_2: ICON(ASSET("hotel_2.png", "icon"), None),
     # map
     IconName.MAP_WILD_GORGE: ICON(ASSET("wild_gorge.png", "map"), None),
     IconName.MAP_WILD_PALACE: ICON(ASSET("wild_palace.png", "map"), None),
@@ -176,6 +186,7 @@ icons: dict[IconName, ICON] = {
     IconName.MAP_WILD_FOREST: ICON(ASSET("wild_forest.png", "map"), None),
     IconName.MAP_WILD_SITE: ICON(ASSET("wild_site.png", "map"), None),
     IconName.MAP_WILD_RUINS: ICON(ASSET("wild_ruins.png", "map"), None),
+    IconName.MAP_WILD_TEMPLE: ICON(ASSET("wild_temple.png", "map"), None),
     IconName.MAP_WILD_GORGE_HELL: ICON(ASSET("wild_gorge_hell.png", "map"), None),
     IconName.MAP_WILD_FOREST_HELL: ICON(ASSET("wild_forest_hell.png", "map"), None),
     IconName.MAP_WILD_GATE_HELL: ICON(ASSET("wild_gate_hell.png", "map"), None),

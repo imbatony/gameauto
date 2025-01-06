@@ -15,7 +15,6 @@ class OctopathTaskCtx(BaseTaskCtx):
     def __init__(self, config: dict):
         super().__init__(config)
         self.action_default_interval = int(config.get("game", {}).get("action_interval", DEFAULT_ACTION_DELAY)) / 1000.0
-
         self.battle_count_after_sleep = 0
         self.total_battle_count = 0
         self.cur_town: TOWN = None
@@ -24,6 +23,7 @@ class OctopathTaskCtx(BaseTaskCtx):
         self.enemy_positions = []
         self.enemy_total = 0
         self.chosse_road = 0
+        self.game_server_region = config.get("game", {}).get("region", "cn")
 
     def getCurTime(self):
         return time.time()
@@ -118,7 +118,7 @@ class OctopathTaskCtx(BaseTaskCtx):
     def _detect_status_with_ocr(self, ocr_result: list[TxtBox]) -> int:
         status = OctopathStatus.Unknown.value
         for pos in ocr_result:
-            if "菜单" in pos.text or "商店" in pos.text or "地图" in pos.text:
+            if "菜单" in pos.text or "商店" in pos.text or "地图" in pos.text or "探索" in pos.text:
                 self.logger.debug(f"主菜单: {pos.text}")
                 status |= OctopathStatus.Menu.value | OctopathStatus.Free.value
             if "其他" in pos.text or "道具" in pos.text or "通知" in pos.text:
@@ -150,6 +150,11 @@ class OctopathTaskCtx(BaseTaskCtx):
     def dice_region(self) -> Box:
         return Box(1000, 520, 300, 130)
 
+    @property
+    def isRegionChina(self)-> bool:
+        return self.game_server_region == "cn"
+    
+    
     def _detect_status_with_screen_shot(self, screenshot: Union[str, Image.Image, Path]) -> int:
         # 检测当前状态, 根据屏幕截图判断当前状态
         status = OctopathStatus.Unknown.value

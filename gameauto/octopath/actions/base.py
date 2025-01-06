@@ -91,3 +91,10 @@ def runActionChain(ctx: OctopathTaskCtx, actions: list[Union[ACTION, KACTION]]) 
         else:
             time.sleep(ctx.action_default_interval)
     return ret
+
+
+class DummyOctpathAction(BaseOctAction):
+    __desc__ = "空操作"
+    @classmethod
+    def run_impl(cls, ctx: OctopathTaskCtx, *args) -> object:
+        return None
