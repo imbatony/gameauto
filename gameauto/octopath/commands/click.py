@@ -93,6 +93,36 @@ class ClickPosCommand(BaseOctopathCommand):
         )
 
 
+class FastClickPosCommand(BaseOctopathCommand):
+
+    __alternate_names__ = ["快速点击坐标", "FastClickPos"]
+
+    @classmethod
+    def run(
+        cls,
+        ctx: OctopathTaskCtx,
+        x: str = None,
+        y: str = None,
+        wait_str: str = "0.2",
+        is_relative_str: str = "False",
+        relative_width_str: str = "1280",
+        relative_height_str: str = "720",
+    ) -> CommandReturnCode:
+        """
+        点击坐标
+
+        :param x: x坐标
+        :param y: y坐标
+        :param wait_str: 点击后等待时间
+        :param is_relative: 是否相对坐标, 默认为False, 如果为True, 则x, y为相对坐标, 需要传入相对宽高针对游戏窗口的宽高进行换算
+        :param relative_width: 相对宽度
+        :param relative_height: 相对高度
+
+        :return: 执行结果
+        """
+        return ClickPosCommand.run(ctx, x, y, wait_str, is_relative_str, relative_width_str, relative_height_str)
+
+
 class WalkAroundCommand(BaseOctopathCommand):
     __alternate_names__ = ["原地走动", "WalkAround"]
 

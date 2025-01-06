@@ -9,7 +9,7 @@ from .move import ChangeTownCommand, ForceChangeTownCommand, ChangeToWildCommand
 from .daily import GetItemsInNamelessTown
 from .test import TestCommand
 from .wait import WaitCommand, WaitUntilIconFoundCommand, LongClickWaitEnterBattleCommand, ForceExitArenaCommand
-from .click import ClickIconCommand, ClickPosCommand, WalkAroundCommand
+from .click import ClickIconCommand, ClickPosCommand, WalkAroundCommand, FastClickPosCommand
 from .combat import ManualAttackSingleRoundCommand, ManualAttackCommand, ForceSetEnemyCommand
 from .gameboard import WealthGameBoardStage1Command, FameGameBoardStage1Command, PowerGameBoardStartCommand, RestRoadCommand
 
@@ -67,4 +67,5 @@ __all__ = [
     "PowerGameBoardStartCommand",
     "ForceExitArenaCommand",
     "RestRoadCommand",
+    "FastClickPosCommand",
 ]
