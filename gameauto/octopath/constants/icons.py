@@ -20,6 +20,7 @@ class IconName(Enum):
     ATTACK = "攻击"
     EXCHANGE = "交换"
     YES = "是"
+    YES_WHITE = "是白"  # 用于确认移动
 
     MAPICON_SELECTED_BTN_GOTO = "前往这里"  # 用于确认地图点击
     MAPICON_SELECTED_BTN_GET_ITEM = "道具回收"  # 用于点击确认回收道具
@@ -45,6 +46,8 @@ class IconName(Enum):
     BED_2 = "床2"  # 除国服外的床的图标
     HOTEL = "旅馆"
     HOTEL_2 = "旅馆2"  # 除国服外的床的旅馆图标
+
+    SUBPLACE = "子地点"
 
     MAP_WILD_GORGE = "野外-峡谷"
     MAP_WILD_PALACE = "野外-宫殿"
@@ -157,6 +160,7 @@ icons: dict[IconName, ICON] = {
     IconName.BACK: ICON(None, RELATIVE_POS(50 / 1280, TOP_BUTTON_Y_RATIO)),
     IconName.EXIT: ICON(None, RELATIVE_POS(1230 / 1280, TOP_BUTTON_Y_RATIO)),
     IconName.YES: ICON(ASSET("yes.png", "icon"), None),
+    IconName.YES_WHITE: ICON(ASSET("yes_white.png", "icon"), None),
     IconName.ATTACK: ICON(ASSET("attack.png", "icon"), rpFrom720P(1100, 640)),
     IconName.EXCHANGE: ICON(ASSET("exchange.png", "icon"), rpFrom720P(1105, 640)),
     IconName.MAPICON_SELECTED_BTN_GOTO: ICON(None, rpFrom720P(1040, 630)),
@@ -179,6 +183,7 @@ icons: dict[IconName, ICON] = {
     IconName.BED_2: ICON(ASSET("bed_2.png", "icon"), None),
     IconName.HOTEL: ICON(ASSET("hotel.png", "icon"), None),
     IconName.HOTEL_2: ICON(ASSET("hotel_2.png", "icon"), None),
+    IconName.SUBPLACE: ICON(ASSET("subplace.png", "icon"), None),
     # map
     IconName.MAP_WILD_GORGE: ICON(ASSET("wild_gorge.png", "map"), None),
     IconName.MAP_WILD_PALACE: ICON(ASSET("wild_palace.png", "map"), None),
