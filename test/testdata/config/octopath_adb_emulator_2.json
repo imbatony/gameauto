@@ -9,7 +9,7 @@
             "host": "127.0.0.1",
             "port": 5037,
             "actvity": "com.epicgames.ue4.GameActivity",
-            "package": "com.netease.ma167",
+            "package": "com.boltrend.octopath.tc",
             "device_addr": "127.0.0.1:16416"
         }
     },
