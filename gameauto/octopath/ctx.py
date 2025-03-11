@@ -24,6 +24,7 @@ class OctopathTaskCtx(BaseTaskCtx):
         self.enemy_total = 0
         self.chosse_road = 0
         self.game_server_region = config.get("game", {}).get("region", "cn")
+        self.close_to_hotel = False
 
     def getCurTime(self):
         return time.time()
@@ -36,7 +37,7 @@ class OctopathTaskCtx(BaseTaskCtx):
     def findImageInScreen(self, image: Union[str, Image.Image, Path, IconName], screenshot: Union[str, Image.Image, Path] = None, **kargs) -> Box | None:
 
         if image is None:
-            self.logger.debug(f"查找图片失败: 图片为空")
+            self.logger.debug("查找图片失败: 图片为空")
             return None
 
         if screenshot is None:
@@ -47,7 +48,7 @@ class OctopathTaskCtx(BaseTaskCtx):
         try:
             return self.gui.locate(image, screenshot, **kargs)
         except Exception:
-            self.logger.exception(f"查找图片失败")
+            self.logger.exception("查找图片失败")
             return None
 
     def getCurrentScreenAsImage(self) -> Image.Image:
@@ -151,10 +152,9 @@ class OctopathTaskCtx(BaseTaskCtx):
         return Box(1000, 520, 300, 130)
 
     @property
-    def isRegionChina(self)-> bool:
+    def isRegionChina(self) -> bool:
         return self.game_server_region == "cn"
-    
-    
+
     def _detect_status_with_screen_shot(self, screenshot: Union[str, Image.Image, Path]) -> int:
         # 检测当前状态, 根据屏幕截图判断当前状态
         status = OctopathStatus.Unknown.value

@@ -18,7 +18,7 @@ from ..base import (
 from ...ctx import OctopathTaskCtx
 from ...status import OctopathStatus
 from ..force import ForceExitToMenuCommand
-from ...actions import ClickIconAction, ACTION,KACTION, ClickAction, ClickCenterIconAction, DummyOctpathAction
+from ...actions import ClickIconAction, ACTION, ClickAction, ClickCenterIconAction, DummyOctpathAction
 
 
 class ChangeTownCommand(BaseOctopathCommand):
@@ -71,6 +71,7 @@ class ChangeTownCommand(BaseOctopathCommand):
             ctx.logger.info(f"切换城镇{town.name}成功")
             ctx.cur_town = town
             ctx.cur_wild = None
+            ctx.close_to_hotel = True
             return CommandReturnCode.SUCCESS
         if code != CommandReturnCode.UNKNOWN:
             return code
@@ -202,14 +203,14 @@ class ChangeToWildCommand(BaseOctopathCommand):
             ctx,
             ACTION("点击地图菜单", ClickIconAction, [IconName.MAP], 1),
             changeWoldAction,
-            ACTION("点击缩小地图", ClickIconAction, [IconName.ZOOM_OUT_MAP], 0) if wild.need_zoom else DummyOctpathAction("不缩小地图"),  
+            ACTION("点击缩小地图", ClickIconAction, [IconName.ZOOM_OUT_MAP], 0) if wild.need_zoom else ACTION("什么都不干", DummyOctpathAction, [], 0),
             ACTION("点击野外图标", ClickCenterIconAction, [wild.icon_name], 1),  # 点击野外图标
-            ACTION("点击前往这里", ClickIconAction, [IconName.MAPICON_SELECTED_BTN_GOTO], 0.8),  
+            ACTION("点击前往这里", ClickIconAction, [IconName.MAPICON_SELECTED_BTN_GOTO], 0.8),
         )
         if code != CommandReturnCode.SUCCESS:
             ctx.logger.error("切换野外失败")
             return code
-        
+
         if wild.addtional_option is not None:
             pos = ctx.get_absolute_pos_from_rel_radio(wild.addtional_option)
             code = cls.runActionChain(
@@ -218,15 +219,12 @@ class ChangeToWildCommand(BaseOctopathCommand):
                 ACTION("点击确认前往", ClickIconAction, [IconName.DIALOG_YES], 8),
             )
         else:
-            code = cls.runActionChain(
-                ctx,
-                ACTION("点击确认前往,等待地图加载8秒", ClickIconAction, [IconName.DIALOG_YES], 8)
-            )
+            code = cls.runActionChain(ctx, ACTION("点击确认前往,等待地图加载8秒", ClickIconAction, [IconName.DIALOG_YES], 8))
 
         if code != CommandReturnCode.SUCCESS:
             ctx.logger.error("切换野外失败")
             return code
-        
+
         ctx.cur_wild = wild
         ctx.cur_town = None
         ctx.logger.info(f"切换到野外{wild_name}成功")
