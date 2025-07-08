@@ -1,4 +1,7 @@
 from __future__ import absolute_import
+
+__version__ = "0.0.1"
+
 from .octopath import OctoPathGameAuto
 import os
 from .utils import get_logger

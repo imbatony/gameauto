@@ -1,5 +1,19 @@
-# 包含所有文件和目录
-include *
-# 排除不需要的文件和目录
-graft tests
+# 包含重要的项目文件
+include README.md
+include LICENSE
+include requirements.txt
+
+# 包含游戏资源文件
+recursive-include gameauto/octopath/assets *
+
+# 包含测试文件
+graft test
+
+# 排除不需要的文件
 global-exclude *.py[cod]
+global-exclude __pycache__
+global-exclude .git*
+global-exclude .DS_Store
+global-exclude *.so
+global-exclude *.dylib
+global-exclude *.dll
