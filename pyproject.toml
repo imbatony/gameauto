@@ -2,7 +2,7 @@
 name = "gameauto"
 version = "0.0.1"
 authors = [
-  { name = "esfak47", email = "esfak47@gmail.com" },
+  { name = "esfak47", email = "esfak47@qq.com" },
 ]
 dependencies = [
     "pyautogui",
@@ -39,5 +39,20 @@ filterwarnings = [
 line-length = 160
 target-version = ['py38']
 
+[project.scripts]
+gameauto = "gameauto.__main__:main"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0.0",
+    "black>=24.0.0",
+    "build>=1.0.0",
+    "twine>=4.0.0"
+]
+
 [tool.setuptools]
-package-dir = {"" = "gameauto"}
+packages = {find = {}}
+include-package-data = true
+
+[tool.setuptools.package-data]
+gameauto = ["octopath/assets/**/*"]
