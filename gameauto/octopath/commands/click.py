@@ -127,7 +127,7 @@ class WalkAroundCommand(BaseOctopathCommand):
     __alternate_names__ = ["原地走动", "WalkAround"]
 
     @classmethod
-    def run(cls, ctx: OctopathTaskCtx, duration_str: str = "8", left_right="true") -> CommandReturnCode:
+    def run(cls, ctx: OctopathTaskCtx, duration_str: str = "8", left_right="true" , speed_str: str = "1") -> CommandReturnCode:
         """
         原地走动, 用于触怪
 
@@ -138,8 +138,9 @@ class WalkAroundCommand(BaseOctopathCommand):
         ctx.logger.info("原地走动")
         duration = float(duration_str)
         left_right = left_right.lower() == "true"
+        speed = float(speed_str)
         start_time = ctx.getCurTime()
-        action = ACTION("左右移动", DragLeftRightAction, [1 / 8, 2], 0)
+        action = ACTION("左右移动", DragLeftRightAction, [speed / 8, 2], 0)
         while ctx.getCurTime() - start_time < duration:
             code = cls.runAction(ctx, action)
             if code != CommandReturnCode.SUCCESS:

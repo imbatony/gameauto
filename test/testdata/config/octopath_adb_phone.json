@@ -1,15 +1,15 @@
 {
     "game": {
         "gui": "adb",
-        "width": 1280,
-        "height": 720,
-        "x_offset": 130,
+        "width": 2400,
+        "height": 1080,
+        "x_offset": 240,
         "y_offset": 0,
         "adb": {
             "host": "127.0.0.1",
             "port": 5037,
             "actvity": "com.epicgames.ue4.GameActivity",
-            "package": "com.netease.ma167.bilibili"
+            "package": "com.square_enix.android_googleplay.octopathj"
         }
     },
     "debug": true
