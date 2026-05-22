@@ -37,6 +37,37 @@ class ADBGUI(BaseGUI):
             # Set socket timeout to 10 (default None)
             self.adb = adb = adbutils.AdbClient(host=adb_host, port=adb_port, socket_timeout=10)
 
+            try:
+                raw_devices = adb.list(extended=True)
+                if raw_devices:
+                    raw_device_infos = [
+                        f"serial={info.serial}, state={info.state}, tags={info.tags}"
+                        for info in raw_devices
+                    ]
+                    self.logger.debug(f"当前ADB原始设备列表(host:devices-l): {raw_device_infos}")
+                else:
+                    self.logger.debug("当前ADB原始设备列表为空")
+
+                devices = adb.device_list()
+                if devices:
+                    device_infos = [f"serial={device.serial}" for device in devices]
+                    self.logger.debug(f"当前ADB可用设备列表(state=device): {device_infos}")
+                else:
+                    self.logger.debug("当前ADB可用设备列表为空")
+
+                if (not self.device_addr) and (not adb_serial) and (not devices):
+                    usb_like_devices = [
+                        info for info in raw_devices
+                        if info.tags.get("usb") or info.state in ("unauthorized", "offline")
+                    ]
+                    if usb_like_devices:
+                        self.logger.warning(
+                            "检测到USB设备但当前不可用(可能是unauthorized/offline), "
+                            "请确认手机已开启USB调试并在设备上允许调试授权"
+                        )
+            except Exception as list_error:
+                self.logger.debug(f"获取ADB设备列表失败: {list_error}")
+
             if self.device_addr:
                 self.logger.info(f"尝试连接ADB设备: {self.device_addr}")
                 result = adb.connect(self.device_addr, 10)

@@ -8,8 +8,9 @@
         "adb": {
             "host": "127.0.0.1",
             "port": 5037,
-            "actvity": "com.epicgames.ue4.GameActivity",
-            "package": "com.square_enix.android_googleplay.octopathj"
+            "activity": "com.epicgames.ue4.GameActivity",
+            "package": "com.square_enix.android_googleplay.octopathj",
+            "serial": "832d6b3"
         }
     },
     "debug": true
